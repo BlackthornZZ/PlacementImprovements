@@ -5,7 +5,7 @@ internal static class BuildInfo
 {
     internal const string ID = "nl.lunarsnail.buildimprovements";
     internal const string Name = "Placement Improvements";
-    internal const string Description = "Bypassing placement rules and custom placement colors!";
+    internal const string Description = "Bypass placement rules and use custom placement colors!";
     internal const string Author = "Lunar Snail";
     internal static readonly string[] CoAuthors = null!;
     internal static readonly string[] Contributors = null!;
@@ -13,8 +13,8 @@ internal static class BuildInfo
     
     // MelonVersion is shown by ML on startup
     // Version is shown by Starlight
-    internal const string MelonVersion = "0.1.0"; 
-    internal const string Version = "0.1.0"; // Auto-Dev_Do_not_remove
+    internal const string MelonVersion = "1.0.0"; 
+    internal const string Version = "1.0.0"; // Auto-Dev_Do_not_remove
     internal const string Discord = null!;
     internal const string SourceCode = null!;
     internal const string Nexus = null!;
