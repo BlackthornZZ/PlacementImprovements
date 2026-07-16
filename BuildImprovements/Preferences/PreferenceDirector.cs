@@ -122,7 +122,7 @@ public static class PreferenceDirector
             identifier: "SlopedPlacementAngles",
             default_value: true,
             display_name: "Allow sloped Placement Angles",
-            description: "Allows placement of gadgets at any angle up to (but not including) 90°.[unimplemented]"
+            description: "Allows placement of gadgets at any angle up to (but not including) 90°."
             );
 
         // Client-side (unless the validity state of a placement is handled on each client seperately)
