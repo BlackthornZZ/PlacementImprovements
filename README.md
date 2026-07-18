@@ -1,4 +1,6 @@
-# Placement Improvements | Slime Rancher 2 Mod
+<p align="center">
+<img width="750" height="300" alt="PlacementImprovementsLogo" src="https://github.com/user-attachments/assets/091e8785-30eb-4c35-a701-5600b82b6111" />
+</p>
 
 **Placement Improvements is unofficial Fan Content permitted under the [Fan Content Policy](https://www.slimerancher.com/fan-content-policy/). Not approved/endorsed by Monomi Park. Portions of the materials used are property of Monomi Park, LLC. ©Monomi Park LLC**
 
