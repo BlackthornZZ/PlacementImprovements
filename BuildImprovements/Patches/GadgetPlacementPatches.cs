@@ -24,6 +24,8 @@ class GadgetItemPatches
         if(__instance._isPlacementBlocked)
             __instance._isPlacementBlocked = PreferenceDirector.bAllowClipping ? false : true;
         __instance._isPlacementValid |= PreferenceDirector.bAllowSlopedPlacementAngle;
+
+        __instance.SetGadgetPlacementValidity(PatchHelper.CurrentValidity != EGadgetValidity.GV_Invalid);
     }
     [HarmonyPostfix]
     [HarmonyPatch(nameof(GadgetItem.SetHeldGadget))]
@@ -37,6 +39,8 @@ class GadgetItemPatches
     {
         if(__instance.GadgetItemMetadata)
             PatchHelper.bTransient_SlopeIsLegal = PatchHelper.IsSlopeLegal(hit.normal, __instance.GadgetItemMetadata.MaxValidPlacementSlope);
+
+        __instance.SetGadgetPlacementValidity(PatchHelper.CurrentValidity != EGadgetValidity.GV_Invalid);
 
         __result = PatchHelper.CurrentValidity != EGadgetValidity.GV_Invalid;
     }
