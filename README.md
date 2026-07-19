@@ -4,6 +4,8 @@
 
 **Placement Improvements is unofficial Fan Content permitted under the [Fan Content Policy](https://www.slimerancher.com/fan-content-policy/). Not approved/endorsed by Monomi Park. Portions of the materials used are property of Monomi Park, LLC. ©Monomi Park LLC**
 
+Also available on [Nexus Mods](https://www.nexusmods.com/slimerancher2/mods/179)
+
 ## Installation instructions
 - (Install MelonLoader v0.7.3 to Slime Rancher 2)
 - (Install the mod Starlight 4.0.3)
