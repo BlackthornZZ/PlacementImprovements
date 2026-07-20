@@ -1,12 +1,12 @@
-﻿using Il2Cpp;
+﻿using BuildImprovements.Input;
+using BuildImprovements.Preferences;
+using Il2Cpp;
 using Il2CppTMPro;
-using MelonLoader;
-using Starlight.Expansion;
 using Starlight.Enums;
+using Starlight.Expansion;
+using Starlight.Managers;
 using Starlight.Storage;
 using UnityEngine;
-using Starlight.Managers;
-using BuildImprovements.Preferences;
 
 namespace BuildImprovements;
 
@@ -32,20 +32,16 @@ public sealed class Main : StarlightExpansionV01
         UnloadTime = ExpansionUnloadTime.Never,
         MultiplayerRequirement = MultiplayerRequirement.ServerAndClient,
     };
-
     /// <inheritdoc/>
     public override void OnLateInitialize()
     {
         PreferenceDirector.CreatePreferences();
     }
 
-    /// <inheritdoc/>
     public override void AfterGameContext(GameContext gameContext)
     {
+        PlacementInputDirector.InitInputs();
     }
-
-    public override void OnUpdate()
-    { }
 
     private static TMP_FontAsset GetFont(string fontName) => Resources.FindObjectsOfTypeAll<TMP_FontAsset>().FirstOrDefault(x => x.name == fontName)!;
 }

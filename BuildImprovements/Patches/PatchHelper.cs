@@ -1,11 +1,5 @@
 ﻿using Il2Cpp;
 using Il2CppMonomiPark.SlimeRancher.Player.PlayerItems;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MelonLoader;
 using UnityEngine;
 using Il2CppMonomiPark.SlimeRancher.Rendering.Pass;
 using BuildImprovements.Preferences;

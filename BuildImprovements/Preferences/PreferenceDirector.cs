@@ -1,6 +1,7 @@
 ﻿using BuildImprovements.Patches;
 using MelonLoader;
 using MelonLoader.Preferences;
+using Starlight.Utils;
 using System.Configuration;
 using UnityEngine;
 
@@ -9,6 +10,7 @@ public static class PreferenceDirector
 {
     public static readonly MelonPreferences_Category ColorPreferences = MelonPreferences.CreateCategory("Placement Improvements - Colors"); 
     public static readonly MelonPreferences_Category SettingPreferences = MelonPreferences.CreateCategory("Placement Improvements - Settings");
+    public static readonly MelonPreferences_Category KeybindPreferences = MelonPreferences.CreateCategory("Placement Improvements - Keybinds");
 
     // Enabled/disabled flags for individual build improvements.
     internal static bool bAllowSlopedPlacementAngle
@@ -32,8 +34,8 @@ public static class PreferenceDirector
         private set => SetConfigValue<bool>(SettingPreferences, "AllowAdvancedMovement", value);
     }
 
-
     // Placement colors
+    // Public for use by SR2MP.
     // These are exclusively RGB colors; you will need to have the alpha channel depend on the material you're changing.
     public static Color ValidColor
     {
@@ -54,30 +56,68 @@ public static class PreferenceDirector
         set => SetConfigValue<string>(ColorPreferences, "InvalidColor", string.Format("{0},{1},{2}", value.r, value.g, value.b));
     }
 
-#if false
     // Keybinds
     internal static KeyCode PlacementLockBind
     {
-        get => SettingPreferences.GetEntry<KeyCode>("LockPlacementBind").Value;
-        private set => SetConfigValue<KeyCode>(SettingPreferences, "LockPlacementBind", value);
+        get => KeybindPreferences.GetEntry<KeyCode>("LockPlacementBind").Value;
+        private set => SetConfigValue<KeyCode>(KeybindPreferences, "LockPlacementBind", value);
     }
     internal static KeyCode NudgeUpBind
     {
-        get => SettingPreferences.GetEntry<KeyCode>("NudgeUpBind").Value;
-        private set => SetConfigValue<KeyCode>(SettingPreferences, "NudgeUpBind", value);
+        get => KeybindPreferences.GetEntry<KeyCode>("NudgeUpBind").Value;
+        private set => SetConfigValue<KeyCode>(KeybindPreferences, "NudgeUpBind", value);
     }
     internal static KeyCode NudgeDownBind
     {
-        get => SettingPreferences.GetEntry<KeyCode>("NudgeDownBind").Value;
-        private set => SetConfigValue<KeyCode>(SettingPreferences, "NudgeDownBind", value);
+        get => KeybindPreferences.GetEntry<KeyCode>("NudgeDownBind").Value;
+        private set => SetConfigValue<KeyCode>(KeybindPreferences, "NudgeDownBind", value);
     }
     internal static KeyCode NudgeForwardBind
     {
-        get => SettingPreferences.GetEntry<KeyCode>("NudgeForwardBind").Value;
-        private set => SetConfigValue<KeyCode>(SettingPreferences, "NudgeForwardBind", value);
+        get => KeybindPreferences.GetEntry<KeyCode>("NudgeForwardBind").Value;
+        private set => SetConfigValue<KeyCode>(KeybindPreferences, "NudgeForwardBind", value);
     }
-#endif
-   
+    internal static KeyCode NudgeLeftBind
+    {
+        get => KeybindPreferences.GetEntry<KeyCode>("NudgeLeftBind").Value;
+        private set => SetConfigValue<KeyCode>(KeybindPreferences, "NudgeLeftBind", value);
+    }
+    internal static KeyCode NudgeRightBind
+    {
+        get => KeybindPreferences.GetEntry<KeyCode>("NudgeRightBind").Value;
+        private set => SetConfigValue<KeyCode>(KeybindPreferences, "NudgeRightBind", value);
+    }
+    internal static KeyCode NudgeBackwardBind
+    {
+        get => KeybindPreferences.GetEntry<KeyCode>("NudgeBackwardBind").Value;
+        private set => SetConfigValue<KeyCode>(KeybindPreferences, "NudgeBackwardBind", value);
+    }
+    internal static KeyCode SmoothNudgeBind 
+    {
+        get => KeybindPreferences.GetEntry<KeyCode>("SmoothNudgeBind").Value;
+        private set => SetConfigValue<KeyCode>(KeybindPreferences, "SmoothNudgeBind", value);
+    }
+    internal static KeyCode ResetPlacementBind
+    {
+        get => KeybindPreferences.GetEntry<KeyCode>("ResetBind").Value;
+        private set => SetConfigValue<KeyCode>(KeybindPreferences, "ResetBind", value);
+    }
+
+    // Nudging features
+    internal static bool bSmoothNudge => InputEUtil.OnKey(SmoothNudgeBind);
+    internal static float NudgeIncrementScale
+    {
+        get => SettingPreferences.GetEntry<float>("NudgeIncrement").Value;
+        private set => SetConfigValue<float>(SettingPreferences, "NudgeIncrement", value);
+    }
+    internal static float NudgeSpeed
+    {
+        get => SettingPreferences.GetEntry<float>("NudgeSpeed").Value;
+        private set => SetConfigValue<float>(SettingPreferences, "NudgeSpeed", value);
+    }
+
+
+
     // Called upon in Main::OnLateInitialize to set up the preference categories.
     internal static void CreatePreferences()
     {
@@ -140,44 +180,84 @@ public static class PreferenceDirector
             description: "Whether to enable the advanced movement keybinds. (locking a placement into place, nudging a placement, snapping a placement to the floor)"
             );
 
-#if false
+        SettingPreferences.CreateEntry(
+            identifier: "NudgeIncrement",
+            default_value: 0.5f,
+            display_name: "Incremental Nudge Step Size",
+            description: "When Smooth Nudging is OFF: the step size of the incremental nudge.");
+
+        SettingPreferences.CreateEntry(
+            identifier: "NudgeSpeed",
+            default_value: 2f,
+            display_name: "Smooth Nudge Speed",
+            description: "When Smooth Nudge is ON: the speed at which the placement will move when nudging.");
+
+
         // == Keybindings ==
         // Client-side
-        SettingPreferences.CreateEntry(
+        KeybindPreferences.CreateEntry(
             identifier: "LockPlacementBind",
             default_value: KeyCode.H,
             display_name: "(Keybind) Lock Placement in Place",
             description: "Keybind for locking a placement in place."
             );
 
-        SettingPreferences.CreateEntry(
+        KeybindPreferences.CreateEntry(
             identifier: "NudgeUpBind",
             default_value: KeyCode.PageUp,
             display_name: "(Keybind) Nudge Placement Upwards",
             description: "Keybind for nudging a placement upwards while it is locked in place."
             );
 
-        SettingPreferences.CreateEntry(
+        KeybindPreferences.CreateEntry(
             identifier: "NudgeDownBind",
             default_value: KeyCode.PageDown,
             display_name: "(Keybind) Nudge Placement Downwards",
             description: "Keybind for nudging a placement downwards while it is locked in place."
             );
 
-        SettingPreferences.CreateEntry(
+        KeybindPreferences.CreateEntry(
             identifier: "NudgeForwardBind",
             default_value: KeyCode.UpArrow,
             display_name: "(Keybind) Nudge Placement Forwards",
             description: "Keybind for nudging a placement forwards (from the player's perspective) while it is locked in place."
             );
-        
-        SettingPreferences.CreateEntry(
-            identifier: "SnapToFloorBind",
-            default_value: KeyCode.Delete,
-            display_name: "(Keybind) Snap Placement To Floor",
-            description: "Keybind for snapping a placement back to the floor after nudging it."
+
+        KeybindPreferences.CreateEntry(
+            identifier: "NudgeLeftBind",
+            default_value: KeyCode.LeftArrow,
+            display_name: "(Keybind) Nudge Placement Left",
+            description: "Keybind for nudging a placement left (from the player's perspective) while it is locked in place."
             );
-#endif
+
+        KeybindPreferences.CreateEntry(
+            identifier: "NudgeRightBind",
+            default_value: KeyCode.RightArrow,
+            display_name: "(Keybind) Nudge Placement Right",
+            description: "Keybind for nudging a placement right (from the player's perspective) while it is locked in place."
+            );
+
+        KeybindPreferences.CreateEntry(
+            identifier: "NudgeBackwardBind",
+            default_value: KeyCode.DownArrow,
+            display_name: "(Keybind) Nudge Placement Backwards",
+            description: "Keybind for nudging a placement backwards (from the player's perspective) while it is locked in place."
+            );
+
+        KeybindPreferences.CreateEntry(
+            identifier: "SmoothNudgeBind",
+            default_value: KeyCode.LeftAlt,
+            display_name: "(Keybind) Smooth Nudge",
+            description: "The keybind that must be held for smooth nudging.");
+
+        KeybindPreferences.CreateEntry(
+            identifier: "ResetBind",
+            default_value: KeyCode.Delete,
+            display_name: "(Keybind) Reset Placement",
+            description: "Keybind for snapping a placement back to its original position after nudging it."
+            );
+
+
     }
     // The methods you pass must have the following outline:
     // void Method(object OldValue, object NewValue)
