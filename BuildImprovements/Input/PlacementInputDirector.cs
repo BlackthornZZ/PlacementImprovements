@@ -145,6 +145,10 @@ internal static class PlacementInputDirector
 
     public static void SetPlacementLocked(GadgetItem GItem, bool bNewPlacementLocked)
     {
+        // Can't set placement locked if there's no instance to lock!
+        if(!GItem._gadgetPlaceholderInstance)
+            return;
+
         bPlacementLocked = bNewPlacementLocked;
 
         if (bNewPlacementLocked)
@@ -152,6 +156,7 @@ internal static class PlacementInputDirector
             LockedPlacementPosition = GItem._gadgetPlaceholderInstance.transform.position;
             InitialLockedPlacementPosition = LockedPlacementPosition;
             LockedPlacementRotation = GItem._gadgetPlaceholderInstance.transform.rotation;
+
         }
         else ResetLock(GItem, true);
     }
