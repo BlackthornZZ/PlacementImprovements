@@ -22,6 +22,7 @@ static class GadgetItemPatches
     [HarmonyPatch(nameof(GadgetItem.UpdateFootprint))]
     private static void UpdateFootprint_Postfix(GadgetItem __instance)
     {
+        if(PreferenceDirector.bAllowAdvancedMovement)
         PlacementInputDirector.OnPostGadgetItemUpdate(__instance);
 
         PatchHelper.SetGadgetVisuals(PatchHelper.CurrentValidity, __instance);
@@ -51,7 +52,7 @@ static class GadgetItemPatches
     [HarmonyPatch(nameof(GadgetItem.IsPlacementValid))]
     private static void IsPlacementValid_Postfix(GadgetItem __instance, Ray ray, RaycastHit hit, ref bool __result)
     {
-        if (PlacementInputDirector.bPlacementLocked)
+        if (PreferenceDirector.bAllowAdvancedMovement && PlacementInputDirector.bPlacementLocked)
             PlacementInputDirector.SetLockedTransform(__instance);
 
         if (__instance.GadgetItemMetadata)
@@ -66,6 +67,8 @@ static class GadgetItemPatches
     [HarmonyPatch(nameof(GadgetItem.ClearHeldGadget))]
     private static void ClearHeldGadget_Postfix(GadgetItem __instance)
     {
+        if (!PreferenceDirector.bAllowAdvancedMovement) return;
+
         PlacementInputDirector.OnGadgetCleared(__instance);
     }
 
