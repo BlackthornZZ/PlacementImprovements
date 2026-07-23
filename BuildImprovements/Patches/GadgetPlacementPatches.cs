@@ -1,15 +1,23 @@
-﻿ // thank you random UnityExplorer crashes after I changed NOTHING.
+﻿// thank you random UnityExplorer crashes after I changed NOTHING.
+//#define WITH_UNITYEXPLORER
 
+using AsmResolver.DotNet.Signatures;
 using BuildImprovements.Input;
 using BuildImprovements.Preferences;
 using BuildImprovements.UI;
 using HarmonyLib;
 using Il2Cpp;
+using Il2CppInterop.Runtime;
+using Il2CppMonomiPark.SlimeRancher;
+using Il2CppMonomiPark.SlimeRancher.Event;
 using Il2CppMonomiPark.SlimeRancher.Player.PlayerItems;
 using Il2CppMonomiPark.SlimeRancher.UI;
 using Il2CppMonomiPark.SlimeRancher.UI.Framework.CommonControls;
+using Il2CppMonomiPark.SlimeRancher.World;
+using MelonLoader;
 using Starlight.Utils;
 using UnityEngine;
+using UnityEngine.Localization;
 
 namespace BuildImprovements.Patches;
 
@@ -85,3 +93,21 @@ static class GadgetItemPatches
         return true;
     }
 };
+[HarmonyPatch(typeof(DisableGadgetModeTrigger))]
+static class DisableGadgetModeTriggerPatches
+{
+    // This is terrible practice but I can't think of anything better.
+    static bool IsPrismacoreGadgetModeDisabler(GameObject Obj) => Obj.name == "DisableGadgetsVolume" && Obj.scene.name == "zoneLabyrinthCoreBase";
+    static bool PrismacoreHarmonized()
+    {
+        CoreRoomController PrismacoreController = BossFightController.Instance._coreRoomController;
+        return PrismacoreController._eventDirector.GetRecordEntryForEvent(InteropStatics.ReinterpretCast<StaticGameEvent, IGameEvent>(PrismacoreController._bossFightCompleted)) != null;
+    }
+    [HarmonyPrefix]
+    [HarmonyPatch(nameof(DisableGadgetModeTrigger.OnTriggerEnter))]
+    private static bool OnTriggerEnter_Prefix(DisableGadgetModeTrigger __instance)
+    {
+        return !(PreferenceDirector.bAllowPrismacoreGadgets && IsPrismacoreGadgetModeDisabler(__instance.gameObject) && PrismacoreHarmonized());
+    }
+};
+

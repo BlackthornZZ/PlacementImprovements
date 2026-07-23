@@ -33,6 +33,11 @@ public static class PreferenceDirector
         get => SettingPreferences.GetEntry<bool>("AllowAdvancedMovement").Value;
         private set => SetConfigValue<bool>(SettingPreferences, "AllowAdvancedMovement", value);
     }
+    internal static bool bAllowPrismacoreGadgets 
+    {
+        get => SettingPreferences.GetEntry<bool>("AllowPrismacoreGadgets").Value;
+        private set => SetConfigValue<bool>(SettingPreferences, "AllowPrismacoreGadgets", value);
+    }
 
     // Placement colors
     // Public for use by SR2MP.
@@ -178,6 +183,13 @@ public static class PreferenceDirector
             default_value: true,
             display_name: "Allow Advanced Placement Movement",
             description: "Whether to enable the advanced movement keybinds. (locking a placement into place, nudging a placement, snapping a placement to the floor)"
+            );
+
+        SettingPreferences.CreateEntry(
+            identifier: "AllowPrismacoreGadgets",
+            default_value: true,
+            display_name: "Prismacore Gadget Mode",
+            description: "Whether to allow building gadgets in the Prismacore (when it is harmonized)."
             );
 
         SettingPreferences.CreateEntry(
