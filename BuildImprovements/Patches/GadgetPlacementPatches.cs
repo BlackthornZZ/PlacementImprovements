@@ -31,7 +31,7 @@ static class GadgetItemPatches
     private static void UpdateFootprint_Postfix(GadgetItem __instance)
     {
         if(PreferenceDirector.bAllowAdvancedMovement)
-        PlacementInputDirector.OnPostGadgetItemUpdate(__instance);
+            PlacementInputDirector.OnPostGadgetItemUpdate(__instance);
 
         PatchHelper.SetGadgetVisuals(PatchHelper.CurrentValidity, __instance);
 
@@ -85,7 +85,7 @@ static class GadgetItemPatches
     [HarmonyPatch(nameof(GadgetItem.StoreGadget))]
     private static bool StoreGadget_Prefix(GadgetItem __instance)
     {
-        if(PlacementInputDirector.bPlacementLocked)
+        if(PreferenceDirector.bAllowAdvancedMovement && PlacementInputDirector.bPlacementLocked)
         {
             PlacementInputDirector.SetPlacementLocked(__instance, false);
             return false;
