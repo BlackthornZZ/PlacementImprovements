@@ -40,7 +40,6 @@ public sealed class Main : StarlightExpansionV01
 
     public override void AfterGameContext(GameContext gameContext)
     {
-        PlacementInputDirector.InitInputs();
     }
 
     private static TMP_FontAsset GetFont(string fontName) => Resources.FindObjectsOfTypeAll<TMP_FontAsset>().FirstOrDefault(x => x.name == fontName)!;
