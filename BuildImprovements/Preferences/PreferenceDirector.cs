@@ -38,6 +38,11 @@ public static class PreferenceDirector
         get => SettingPreferences.GetEntry<bool>("AllowPrismacoreGadgets").Value;
         private set => SetConfigValue<bool>(SettingPreferences, "AllowPrismacoreGadgets", value);
     }
+    internal static bool bAllowFloatingGadgets
+    {
+        get => SettingPreferences.GetEntry<bool>("AllowFloatingGadgets").Value;
+        private set => SetConfigValue<bool>(SettingPreferences, "AllowFloatingGadgets", value);
+    }
 
     // Placement colors
     // Public for use by SR2MP.
@@ -167,7 +172,7 @@ public static class PreferenceDirector
             identifier: "SlopedPlacementAngles",
             default_value: true,
             display_name: "Allow sloped Placement Angles",
-            description: "Allows placement of gadgets at any angle up to (but not including) 90°."
+            description: "Allows placement of gadgets at any angle."
             );
 
         // Client-side (unless the validity state of a placement is handled on each client seperately)
@@ -191,6 +196,12 @@ public static class PreferenceDirector
             display_name: "Prismacore Gadget Mode",
             description: "Whether to allow building gadgets in the Prismacore (when it is harmonized)."
             );
+
+        SettingPreferences.CreateEntry(
+            identifier: "AllowFloatingGadgets",
+            default_value: true,
+            display_name: "Allow Floating Gadgets",
+            description: "Whether gadgets are considered valid while floating. (Very unforgiving if off!)");
 
         SettingPreferences.CreateEntry(
             identifier: "NudgeIncrement",
