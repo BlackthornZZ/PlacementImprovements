@@ -43,6 +43,9 @@ public static class PatchHelper
         if (!InGadgetItem._gadgetPlaceholderInstanceGadget.IsCompletelyGrounded(InGadgetItem.GadgetItemMetadata.GroundedCheckAdjustment, InGadgetItem.GadgetItemMetadata.GroundedRaycastDistance) && !PreferenceDirector.bAllowFloatingGadgets)
             return EGadgetValidity.GV_Invalid;
 
+        if (!InGadgetItem.IsLinkedGadgetInRange && !PreferenceDirector.bInfiniteLinkedRange)
+            return EGadgetValidity.GV_Invalid;
+
         if (InGadgetItem._gadgetPlaceholderInstanceGadget.IsOverlapping(
             InGadgetItem.GadgetItemMetadata.OverlapPlacementFloorTolerance, 
             InGadgetItem.GadgetItemMetadata.GadgetOverlapLayers))

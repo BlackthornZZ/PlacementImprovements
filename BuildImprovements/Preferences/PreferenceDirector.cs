@@ -43,6 +43,11 @@ public static class PreferenceDirector
         get => SettingPreferences.GetEntry<bool>("AllowFloatingGadgets").Value;
         private set => SetConfigValue<bool>(SettingPreferences, "AllowFloatingGadgets", value);
     }
+    internal static bool bInfiniteLinkedRange
+    {
+        get => SettingPreferences.GetEntry<bool>("InfiniteLinkedRange").Value;
+        private set => SetConfigValue<bool>(SettingPreferences, "InfiniteLinkedRange", value);
+    }
 
     // Placement colors
     // Public for use by SR2MP.
@@ -202,6 +207,13 @@ public static class PreferenceDirector
             default_value: true,
             display_name: "Allow Floating Gadgets",
             description: "Whether gadgets are considered valid while floating. (Very unforgiving if off!)");
+
+        SettingPreferences.CreateEntry(
+            identifier: "InfiniteLinkedRange",
+            default_value: false,
+            display_name: "Infinite Linked Gadget Range",
+            description: "Whether Linked Gadgets should consider their range during placement validity checks."
+            );
 
         SettingPreferences.CreateEntry(
             identifier: "NudgeIncrement",

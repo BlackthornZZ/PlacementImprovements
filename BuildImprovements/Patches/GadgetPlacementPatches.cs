@@ -96,6 +96,13 @@ static class GadgetItemPatches
         }
         return true;
     }
+
+    [HarmonyPostfix]
+    [HarmonyPatch(nameof(GadgetItem.IsInLinkedGadgetRange))]
+    private static void IsInLinkedGadgetRange_Postfix(ref bool __result)
+    {
+        if (PreferenceDirector.bInfiniteLinkedRange) __result = true;
+    }
 };
 [HarmonyPatch(typeof(DisableGadgetModeTrigger))]
 static class DisableGadgetModeTriggerPatches
