@@ -1,15 +1,9 @@
-﻿using BuildImprovements.Patches;
-using BuildImprovements.Preferences;
-using Harmony;
+﻿using BuildImprovements.Preferences;
+using BuildImprovements.UI;
 using Il2Cpp;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppMonomiPark.SlimeRancher.Input;
 using Il2CppMonomiPark.SlimeRancher.Player.PlayerItems;
 using Il2CppMonomiPark.SlimeRancher.UI;
-using Il2CppMonomiPark.SlimeRancher.UI.Framework.CommonControls;
-using Il2CppSystem.Dynamic.Utils;
-using MelonLoader;
-using Starlight.Enums;
 using Starlight.Utils;
 using System;
 using System.Collections.Generic;
@@ -156,6 +150,9 @@ internal static class PlacementInputDirector
             LockedPlacementPosition = GItem._gadgetPlaceholderInstance.transform.position;
             InitialLockedPlacementPosition = LockedPlacementPosition;
             LockedPlacementRotation = GItem._gadgetPlaceholderInstance.transform.rotation;
+
+            if(SceneContext.Instance.TutorialDirector._currPopup == null)
+                AdditiveUIDirector.PlayAdvancedMovementTutorial();
 
         }
         else ResetLock(GItem, true);

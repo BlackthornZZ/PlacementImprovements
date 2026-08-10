@@ -1,7 +1,5 @@
 ﻿#define WITH_INPUT_LEGEND_MODIFICATION
 
-using BuildImprovements.Input;
-using BuildImprovements.Preferences;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppMonomiPark.SlimeRancher.Input;
 using Il2CppMonomiPark.SlimeRancher.UI.Framework.CommonControls;
@@ -11,17 +9,73 @@ using MelonLoader;
 using UnityEngine.Localization;
 using Il2CppSystem.Dynamic.Utils;
 using UnityEngine.InputSystem;
-using Harmony;
 using Il2Cpp;
 using Il2CppSystem.Linq;
 using Il2CppMonomiPark.SlimeRancher.UI.Gadget;
-using Il2CppMonomiPark.SlimeRancher;
+using Il2CppMonomiPark.SlimeRancher.Tutorial;
+using Il2CppMonomiPark.SlimeRancher.UI.Popup;
+using Il2CppMonomiPark.SlimeRancher.Util.Extensions;
 
 namespace BuildImprovements.UI;
 
 // Handler class for everything to do with UI in placement improvements.
 internal static class AdditiveUIDirector
 {
+    internal static TutorialDefinition? _AdvancedMovementTutorial = null;
+    public static TutorialDefinition AdvancedMovementTutorial 
+    { 
+        get
+        {
+            if (_AdvancedMovementTutorial == null)
+                _AdvancedMovementTutorial = MakeAdvancedMovementTutorial();
+            return _AdvancedMovementTutorial;
+        }
+    }
+
+    internal static TutorialDefinition MakeAdvancedMovementTutorial()
+    {
+        TutorialDefinition Tutorial = new TutorialDefinition();
+        Tutorial.TitleText = LanguageEUtil.AddTranslation("Advanced Gadget Movement");
+        Tutorial.BodyText = LanguageEUtil.AddTranslation("You locked a gadget in place. You can now walk around it without it moving or rotating!\nTry nudging it around! You can nudge in increments or smoothly over time, vertically or horizontally.");
+        Tutorial.AutoComplete = true;
+        Tutorial.CheckFinishOnStart = false;
+        Tutorial.CompletionUITime = 10f;
+        Tutorial.OverrideCompletionUITime = true;
+#if DEBUG
+        Tutorial.AllowReplay = true;
+#else
+        Tutorial.AllowReplay = false;
+#endif
+        Tutorial.CompletionEvent = new();
+        List<TutorialDefinition.TutorialControlLine> Controls = new();
+
+        TutorialDefinition.TutorialControlLine Control = new();
+        Control.Description = LanguageEUtil.AddTranslation("Nudge Vertically");
+        Controls.Add(Control);
+
+        Control = new();
+        Control.Description = LanguageEUtil.AddTranslation("Nudge Horizontally");
+        Controls.Add(Control);
+
+        Control = new();
+        Control.Description = LanguageEUtil.AddTranslation("Smooth Nudge");
+        Controls.Add(Control);
+
+        Control = new();
+        Control.Description = LanguageEUtil.AddTranslation("Snap To Floor");
+        Controls.Add(Control);
+
+        return Tutorial;
+    }
+
+    public static void PlayAdvancedMovementTutorial()
+    {
+        //SceneContext.Instance.TutorialDirector.OpenTutorialPopup(AdvancedMovementTutorial);
+        TutorialDirector Director = SceneContext.Instance.TutorialDirector;
+        Director._currPopup = TutorialPopupUI.CreateTutorialPopup(AdvancedMovementTutorial).SRGetComponent<TutorialPopupUI>();
+        Director._currPopup.CloseAfter(AdvancedMovementTutorial.CompletionUITime, true, true);
+    }
+
 #if WITH_INPUT_LEGEND_MODIFICATION
     public static void ModifyBottomInputLegendUI(InputLegend BottomInputLegend)
     {
@@ -152,6 +206,4 @@ internal static class AdditiveUIDirector
     public static string[] GetInputHintKeys(InputLegend ParentLegend, string Descriptor) { return Array.Empty<string>(); }
     public static void SetInputHintKeys(InputLegend ParentLegend, string ExistingDescriptor, KeyCode[] NewKeys) { }
 #endif
-
-
 }

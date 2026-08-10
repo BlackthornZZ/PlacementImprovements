@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Starlight.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,5 +22,17 @@ internal static class InteropStatics
         *(IntPtr*)&destRef = *(IntPtr*)&sourceRef;
 #pragma warning restore CS8500
         return __refvalue(destRef, TDest);
+    }
+
+    // ReinterpretCast for lists. Allocates a new list.
+    public static unsafe List<TDest> ReinterpretList<TSource, TDest>(List<TSource> srcList)
+    {
+        List<TDest> ReinterpretedList = new();
+        ReinterpretedList.EnsureCapacity(srcList.Count);
+        foreach (TSource src in srcList)
+        {
+            ReinterpretedList.Add(ReinterpretCast<TSource, TDest>(src));
+        }
+        return ReinterpretedList;
     }
 }
