@@ -17,7 +17,7 @@ internal static class BuildInfo
     internal const string Version = "1.0.0"; // Auto-Dev_Do_not_remove
     internal const string Discord = null!;
     internal const string SourceCode = "https://github.com/BlackthornZZ/PlacementImprovements";
-    internal const string Nexus = null!;
+    internal const string Nexus = "https://www.nexusmods.com/slimerancher2/mods/179";
     internal const bool UsePrism = false;
     internal const string MinimumStarlightVersion = Starlight.BuildInfo.CodeVersion; // e.g "3.6.3", the min required SR2 version. No beta or alpha versions
     internal const string MinimumGameVersion = "1.2.3"; // e.g 1.1.0 or something similar (optional)
