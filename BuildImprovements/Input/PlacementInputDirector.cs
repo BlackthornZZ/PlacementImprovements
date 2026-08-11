@@ -134,9 +134,7 @@ internal static class PlacementInputDirector
         LockedPlacementPosition += NudgeDelta;
     }
 
-    internal static bool CheckNudgeKey(KeyCode inKey) => (PreferenceDirector.bSmoothNudge && InputEUtil.OnKey(inKey)) || (!PreferenceDirector.bSmoothNudge && InputEUtil.OnKeyDown(inKey));
-
-
+    internal static bool CheckNudgeKey(KeyCode inKey) => PreferenceDirector.bSmoothNudge ? InputEUtil.OnKey(inKey) : InputEUtil.OnKeyDown(inKey);
     public static void SetPlacementLocked(GadgetItem GItem, bool bNewPlacementLocked)
     {
         // Can't set placement locked if there's no instance to lock!
