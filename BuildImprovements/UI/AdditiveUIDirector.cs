@@ -1,4 +1,4 @@
-﻿#define WITH_INPUT_LEGEND_MODIFICATION
+﻿//#define WITH_INPUT_LEGEND_MODIFICATION
 
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppMonomiPark.SlimeRancher.Input;

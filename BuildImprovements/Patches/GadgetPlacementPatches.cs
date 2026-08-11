@@ -1,37 +1,26 @@
-﻿// thank you random UnityExplorer crashes after I changed NOTHING.
-//#define WITH_UNITYEXPLORER
-
-using AsmResolver.DotNet.Signatures;
-using BuildImprovements.Input;
+﻿using BuildImprovements.Input;
 using BuildImprovements.Preferences;
-using BuildImprovements.UI;
 using HarmonyLib;
 using Il2Cpp;
-using Il2CppInterop.Runtime;
 using Il2CppMonomiPark.SlimeRancher;
 using Il2CppMonomiPark.SlimeRancher.Event;
+using Il2CppMonomiPark.SlimeRancher.Input;
 using Il2CppMonomiPark.SlimeRancher.Player.PlayerItems;
-using Il2CppMonomiPark.SlimeRancher.UI;
-using Il2CppMonomiPark.SlimeRancher.UI.Framework.CommonControls;
 using Il2CppMonomiPark.SlimeRancher.World;
-using MelonLoader;
-using Starlight.Utils;
 using UnityEngine;
-using UnityEngine.Localization;
 
 namespace BuildImprovements.Patches;
 
 [HarmonyPatch(typeof(GadgetItem))]
 static class GadgetItemPatches
 {
-#if !WITH_UNITYEXPLORER
 
     [HarmonyPostfix]
     [HarmonyPatch(nameof(GadgetItem.UpdateFootprint))]
     private static void UpdateFootprint_Postfix(GadgetItem __instance)
     {
         if(PreferenceDirector.bAllowAdvancedMovement)
-            PlacementInputDirector.OnPostGadgetItemUpdate(__instance);
+            PlacementInputDirector.OnPostGadgetItemFootprintUpdate(__instance);
 
         PatchHelper.SetGadgetVisuals(PatchHelper.CurrentValidity, __instance);
 
@@ -46,7 +35,6 @@ static class GadgetItemPatches
 
         __instance._gadgetDirector._CanPlaceSelectedGadget_k__BackingField.Set(PatchHelper.CurrentValidity != EGadgetValidity.GV_Invalid);
     }
-#endif
     [HarmonyPostfix]
     [HarmonyPatch(nameof(GadgetItem.SetHeldGadget))]
     private static void SetHeldGadget_Postfix(GadgetItem __instance)
@@ -122,3 +110,19 @@ static class DisableGadgetModeTriggerPatches
     }
 };
 
+[HarmonyPatch(typeof(InputDirector))]
+static class InputDirectorPatches
+{
+    [HarmonyPostfix]
+    [HarmonyPatch(nameof(InputDirector.Update))]
+    static void Update_Postfix()
+    {
+        // In menu or instance where gadget-related input shouldnt be accepted
+        if (SceneContext.Instance == null || SceneContext.Instance.player == null) 
+            return;
+
+        GadgetItem GItem = SceneContext.Instance.player.GetComponent<PlayerItemController>().GadgetItem;
+
+        PlacementInputDirector.OnInputDirectorUpdate(SceneContext.Instance.player.GetComponent<PlayerItemController>().GadgetItem);
+    }
+};

@@ -117,6 +117,11 @@ public static class PreferenceDirector
         get => KeybindPreferences.GetEntry<KeyCode>("ResetBind").Value;
         private set => SetConfigValue<KeyCode>(KeybindPreferences, "ResetBind", value);
     }
+    internal static KeyCode GadgetEyedropperBind 
+    {
+        get => KeybindPreferences.GetEntry<KeyCode>("GadgetEyedropperBind").Value;
+        private set => SetConfigValue<KeyCode>(KeybindPreferences, "GadgetEyedropperBind", value);
+    }
 
     // Nudging features
     internal static bool bSmoothNudge => InputEUtil.OnKey(SmoothNudgeBind);
@@ -290,6 +295,13 @@ public static class PreferenceDirector
             default_value: KeyCode.Delete,
             display_name: "(Keybind) Reset Placement",
             description: "Keybind for snapping a placement back to its original position after nudging it."
+            );
+
+        KeybindPreferences.CreateEntry(
+            identifier: "GadgetEyedropperBind",
+            default_value: KeyCode.I,
+            display_name: "(Keybind) Gadget Eyedropper",
+            description: "Keybind for eyedropping a gadget from the world to start building it."
             );
 
 

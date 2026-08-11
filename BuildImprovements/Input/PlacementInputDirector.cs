@@ -2,8 +2,13 @@
 using BuildImprovements.UI;
 using Il2Cpp;
 using Il2CppMonomiPark.SlimeRancher.Input;
+using Il2CppMonomiPark.SlimeRancher.Player;
 using Il2CppMonomiPark.SlimeRancher.Player.PlayerItems;
 using Il2CppMonomiPark.SlimeRancher.UI;
+using Il2CppMonomiPark.SlimeRancher.Util.Extensions;
+using Il2CppMonomiPark.SlimeRancher.World;
+using Il2CppSystem;
+using MelonLoader;
 using Starlight.Utils;
 using System;
 using System.Collections.Generic;
@@ -22,7 +27,9 @@ internal static class PlacementInputDirector
     internal static InputEventBinding ResetBinding = null!;
     internal static InputActionMap InputMap = null!;
 
-    internal static LocalizedString MaxNudgeString = LanguageEUtil.AddTranslation("MAX NUDGE DISTANCE REACHED");
+    internal static readonly LocalizedString MaxNudgeString = LanguageEUtil.AddTranslation("Max Nudge Distance Reached");
+    internal static readonly LocalizedString EyedropperNoneAvailableString = LanguageEUtil.AddTranslation("None In Storage");
+    internal static readonly LocalizedString EyedropperNoTarget = LanguageEUtil.AddTranslation("Not a Gadget");
     internal static float LastNudgeWarning = 0f;
     internal const float NudgeWarningInterval = 1f;
 
@@ -31,10 +38,10 @@ internal static class PlacementInputDirector
     internal static Quaternion LockedPlacementRotation = Quaternion.identity;
     internal static bool bPlacementLocked = false;
     public static void OnGadgetSelected(GadgetItem GItem) => ResetLock(GItem, false);
-    public static void OnPostGadgetItemUpdate(GadgetItem GItem) 
-    {
-        CheckInputs(GItem);
 
+    public static void OnInputDirectorUpdate(GadgetItem GItem) => CheckInputs(GItem, SceneContext.Instance.PlayerState.GadgetModeActive);
+    public static void OnPostGadgetItemFootprintUpdate(GadgetItem GItem) 
+    {
         // This should not happen!!!
         if ((!GItem._gadgetFootprintInstance || !GItem._gadgetPlaceholderInstance) && bPlacementLocked)
             bPlacementLocked = false;
@@ -58,8 +65,15 @@ internal static class PlacementInputDirector
         GItem._gadgetPlaceholderInstance.transform.SetPositionAndRotation(LockedPlacementPosition, LockedPlacementRotation);
     }
 
-    public static void CheckInputs(GadgetItem GItem)
+    public static void CheckInputs(GadgetItem GItem, bool bGadgetMode)
     {
+        if(InputEUtil.OnKeyDown(PreferenceDirector.GadgetEyedropperBind))
+        {
+            DoGadgetEyedropper(GItem);
+        }
+
+        if (!bGadgetMode) return;
+
         if (InputEUtil.OnKeyDown(PreferenceDirector.PlacementLockBind) && GItem._isFootprintVisible && GItem._gadgetDirector.SelectedSlottedGadget != null)
         {
             SetPlacementLocked(GItem, !bPlacementLocked);
@@ -134,6 +148,35 @@ internal static class PlacementInputDirector
         LockedPlacementPosition += NudgeDelta;
     }
 
+    public static void DoGadgetEyedropper(GadgetItem GItem)
+    {
+        if (GItem._player.GadgetModeActive.Value ? !GItem._gadgetDirector.TargetedGadget.Value : (TargetingUI.Instance.GetTargetObject() == null || !TargetingUI.Instance.GetGadgetTargetInfo(TargetingUI.Instance.GetTargetObject())))
+        {
+            GItem.PlayTransientAudio(GItem.GadgetItemMetadata.BlockedPlacementErrorCue);
+            HudUI.Instance.FlashErrorMessage(EyedropperNoTarget);
+            return;
+        }
+
+        GadgetDefinition TargetedDefinition = GItem._player.GadgetModeActive.Value ? GItem._gadgetDirector.TargetedGadget.Value.IdentTypeAsDefinition : TargetingUI.Instance.GetTargetObject().SRGetComponentInParent<Gadget>().IdentTypeAsDefinition;
+
+        if(GItem._gadgetDirector._model.GetCount(TargetedDefinition) <= 0)
+        {
+            GItem.PlayTransientAudio(GItem.GadgetItemMetadata.BlockedPlacementErrorCue);
+            HudUI.Instance.FlashErrorMessage(EyedropperNoneAvailableString);
+            return;
+        }
+
+        if (!GItem._player.GadgetModeActive)
+        {
+            GItem._player.GadgetModeActive.Set(true);
+            GItem._player.VacuumItem.OnItemDeactivated();
+            GItem.OnItemActivated();
+        }
+        GItem._gadgetDirector._model.TrySelectGadget(TargetedDefinition);
+        GItem._gadgetDirector.UpdateSelectedGadget();
+        GItem.SetHeldGadget(TargetedDefinition);
+
+    }
     internal static bool CheckNudgeKey(KeyCode inKey) => PreferenceDirector.bSmoothNudge ? InputEUtil.OnKey(inKey) : InputEUtil.OnKeyDown(inKey);
     public static void SetPlacementLocked(GadgetItem GItem, bool bNewPlacementLocked)
     {

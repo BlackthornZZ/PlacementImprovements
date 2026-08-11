@@ -40,7 +40,7 @@ public static class PatchHelper
         if (!bTransient_SlopeIsLegal && !PreferenceDirector.bAllowSlopedPlacementAngle)
             return EGadgetValidity.GV_Invalid;
 
-        if (!InGadgetItem._gadgetPlaceholderInstanceGadget.IsCompletelyGrounded(InGadgetItem.GadgetItemMetadata.GroundedCheckAdjustment, InGadgetItem.GadgetItemMetadata.GroundedRaycastDistance) && !PreferenceDirector.bAllowFloatingGadgets)
+        if (!PreferenceDirector.bAllowFloatingGadgets && !InGadgetItem._gadgetPlaceholderInstanceGadget.IsCompletelyGrounded(InGadgetItem.GadgetItemMetadata.GroundedCheckAdjustment, InGadgetItem.GadgetItemMetadata.GroundedRaycastDistance))
             return EGadgetValidity.GV_Invalid;
 
         if (!InGadgetItem.IsLinkedGadgetInRange && !PreferenceDirector.bInfiniteLinkedRange)
