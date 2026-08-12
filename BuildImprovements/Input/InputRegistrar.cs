@@ -23,7 +23,7 @@ internal static class InputRegistrar
     // In the future all our input checking will be moved to be registered here.
     internal static void RegisterPlacementImprovementsInputs() { }
 
-    // Encapsulates everything necessary to set up a callback for Key. Only possible while the InputDirector._mainGame action map is disabled.
+    // Encapsulates everything necessary to set up a callback for Key. Only possible while the InputDirector._mainGame.Map.Asset is disabled.
     public static InputEvent RegisterInputForKey(Key Key, string ActionName, Action<InputEventData>? Performed = null, Action<InputEventData>? Started = null, Action<InputEventData>? Canceled = null) => 
         RegisterInput(InputControlFromKeyboardKey(Key), ActionName, Performed, Started, Canceled);
     public static InputEvent RegisterInputForMouse(MouseButton Button, string ActionName, Action<InputEventData>? Performed = null, Action<InputEventData>? Started = null, Action<InputEventData>? Canceled = null) =>
@@ -88,8 +88,8 @@ internal static class InputRegistrar
 
         return Binding;
     }
-    // Converts KeyCodes from the old input system (the one used for keybind settings with Starlight) to the new input system. THIS NEEDS SOME MORE WORK, THIS IS BROKEN.
-    public static Key KeyCodeToKey(KeyCode keyCode) => (Key)((int)keyCode);
+    // Converts KeyCodes from the old input system (the one used for keybind settings with Starlight) to the new input system.
+    public static Key KeyCodeToKey(KeyCode keyCode) => throw new NotImplementedException();
     public static InputControl InputControlFromKeyboardKey(Key InKey) => Keyboard.current[InKey];
     public static InputControl InputControlFromMouse(MouseButton Button)
     {
