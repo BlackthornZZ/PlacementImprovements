@@ -36,7 +36,8 @@ internal static class InputRegistrar
     internal static void RegisterPlacementImprovementsInputs()
     {
         EventStore.GadgetLock = RegisterInputForKey(KeyCodeToKey(PreferenceDirector.PlacementLockBind), "Lock Gadget", PlacementInputDirector.GadgetLock_Performed);
-        EventStore.GadgetEyedrop = RegisterInputForKey(KeyCodeToKey(PreferenceDirector.GadgetEyedropperBind), "Gadget Eyedropper", PlacementInputDirector.GadgetEyedropper_Performed);
+        EventStore.GadgetEyedrop = PreferenceDirector.bGadgetEyedropperMiddleClick ? RegisterInputForMouse(MouseButton.Middle, "Gadget Eyedropper", PlacementInputDirector.GadgetEyedropper_Performed) :
+            RegisterInputForKey(KeyCodeToKey(PreferenceDirector.GadgetEyedropperBind), "Gadget Eyedropper", PlacementInputDirector.GadgetEyedropper_Performed);
 
         // Unused dummy actions. These are enabled like normal but are only used for display purposes, actual logic is still handled by InputEUtil.
         EventStore.SmoothNudge = RegisterInputForKey(KeyCodeToKey(PreferenceDirector.SmoothNudgeBind), "Smooth Nudge");
@@ -73,9 +74,11 @@ internal static class InputRegistrar
         {
             action = ActionName,
             // This might not be necessary but I'll leave it in for now.
-            path = Control.path.Replace("/Keyboard", "<Keyboard>"),
+            path = Control.path.Replace("/Keyboard", "<Keyboard>").Replace("/Mouse", "<Mouse>"),
             groups = group
         };
+
+        MelonLogger.Msg("InputBinding effective path: " + Binding.effectivePath);
 
         return Binding;
     }

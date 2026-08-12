@@ -117,6 +117,11 @@ public static class PreferenceDirector
         get => KeybindPreferences.GetEntry<KeyCode>("ResetBind").Value;
         private set => SetConfigValue<KeyCode>(KeybindPreferences, "ResetBind", value);
     }
+    internal static bool bGadgetEyedropperMiddleClick
+    {
+        get => KeybindPreferences.GetEntry<bool>("GadgetEyedropperMiddleClick").Value;
+        private set => SetConfigValue<bool>(KeybindPreferences, "GadgetEyedropperMiddleClick", value);
+    }
     internal static KeyCode GadgetEyedropperBind 
     {
         get => KeybindPreferences.GetEntry<KeyCode>("GadgetEyedropperBind").Value;
@@ -298,10 +303,17 @@ public static class PreferenceDirector
             );
 
         KeybindPreferences.CreateEntry(
+            identifier: "GadgetEyedropperMiddleClick",
+            default_value: true,
+            display_name: "Use Middle Click For Eyedropper",
+            description: "Whether to use the mouse middle click for the eyedropper. If unchecked, the keybind is used."
+            );
+
+        KeybindPreferences.CreateEntry(
             identifier: "GadgetEyedropperBind",
             default_value: KeyCode.I,
             display_name: "(Keybind) Gadget Eyedropper",
-            description: "Keybind for eyedropping a gadget from the world to start building it."
+            description: "Keybind for copying a gadget from the world to start building it."
             );
 
 

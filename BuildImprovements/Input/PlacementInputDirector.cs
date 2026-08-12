@@ -62,19 +62,7 @@ internal static class PlacementInputDirector
 
     public static void CheckInputs(GadgetItem GItem, bool bGadgetMode)
     {
-        if(InputEUtil.OnKeyDown(PreferenceDirector.GadgetEyedropperBind))
-        {
-            DoGadgetEyedropper(GItem);
-        }
-
-        if (!bGadgetMode) return;
-
-        if (InputEUtil.OnKeyDown(PreferenceDirector.PlacementLockBind) && GItem._isFootprintVisible && GItem._gadgetDirector.SelectedSlottedGadget != null)
-        {
-            SetPlacementLocked(GItem, !bPlacementLocked);
-        }
-
-        if (!bPlacementLocked) return;
+        if (!bGadgetMode || !bPlacementLocked) return;
 
         DoNudge(GItem);
 
@@ -195,6 +183,12 @@ internal static class PlacementInputDirector
     }
 
     // InputEvent callbacks
-    public static void GadgetLock_Performed(InputEventData Data) => MelonLogger.Msg("GadgetLock");
-    public static void GadgetEyedropper_Performed(InputEventData Data) => MelonLogger.Msg("Gadget Eyedropper");
+    public static void GadgetLock_Performed(InputEventData Data)
+    {
+        GadgetItem GItem = SceneContext.Instance.player.GetComponent<PlayerItemController>().GadgetItem;
+
+        if (GItem._isFootprintVisible && GItem._gadgetDirector.SelectedSlottedGadget != null)
+            SetPlacementLocked(GItem, !bPlacementLocked);
+    }
+    public static void GadgetEyedropper_Performed(InputEventData Data) => DoGadgetEyedropper(SceneContext.Instance.player.GetComponent<PlayerItemController>().GadgetItem);
 }
