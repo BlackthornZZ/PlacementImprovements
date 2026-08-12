@@ -1,4 +1,5 @@
-﻿using Il2CppInterop.Runtime.InteropTypes.Arrays;
+﻿
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppMonomiPark.SlimeRancher.Input;
 using Il2CppMonomiPark.SlimeRancher.UI.Framework.CommonControls;
 using Starlight.Utils;
@@ -13,6 +14,7 @@ using Il2CppMonomiPark.SlimeRancher.UI.Gadget;
 using Il2CppMonomiPark.SlimeRancher.Tutorial;
 using Il2CppMonomiPark.SlimeRancher.UI.Popup;
 using Il2CppMonomiPark.SlimeRancher.Util.Extensions;
+using BuildImprovements.Input;
 
 namespace BuildImprovements.UI;
 
@@ -20,6 +22,7 @@ namespace BuildImprovements.UI;
 internal static class AdditiveUIDirector
 {
     internal static TutorialDefinition? _AdvancedMovementTutorial = null;
+    internal static bool bInputLegendsModified = false;
     public static TutorialDefinition AdvancedMovementTutorial 
     { 
         get
@@ -75,8 +78,16 @@ internal static class AdditiveUIDirector
 
     public static void ModifyBottomInputLegendUI(InputLegend BottomInputLegend)
     {
+        if (bInputLegendsModified) return;
+
+        GadgetInputLegendConfiguration GadgetInputLegendConfig = BottomInputLegend.gameObject.GetComponent<GadgetInputLegendUpdater>()._inputLegendConfiguration;
+
+        AddNewKeybindToInputLegend(BottomInputLegend, GadgetInputLegendConfig.GadgetSelectedInputLegend, "Lock Gadget", InputRegistrar.EventStore.GadgetLock);
+        AddNewKeybindToInputLegend(BottomInputLegend, GadgetInputLegendConfig.GadgetTargetedInputLegend, "Copy Gadget", InputRegistrar.EventStore.GadgetEyedrop);
+
+        bInputLegendsModified = true;
     }
-    public static void AddNewKeybindToInputLegend(InputLegend LegendToAddTo, string Descriptor, InputEvent Event, bool DoublePress = false)
+    public static void AddNewKeybindToInputLegend(InputLegend Legend, InputLegendConfiguration LegendConfig, string Descriptor, InputEvent Event, bool DoublePress = false)
     {
         LocalizedString Label = LanguageEUtil.AddTranslation(Descriptor);
 
@@ -86,10 +97,9 @@ internal static class AdditiveUIDirector
             Label = Label
         };
 
-        GadgetInputLegendUpdater Updater = LegendToAddTo.gameObject.GetComponent<GadgetInputLegendUpdater>();
-        List<InputHintConfiguration> Hints = LegendToAddTo._currentHints.ToNetList();
+        List<InputHintConfiguration> Hints = LegendConfig._hints.ToNetList();
         Hints.Add(config);
-        LegendToAddTo.SetInputHints(InteropStatics.ReinterpretCast<Il2CppSystem.Collections.Generic.List<InputHintConfiguration>, Il2CppSystem.Collections.Generic.IEnumerable<InputHintConfiguration>>(Hints.ToIl2CppList()));
-        Updater._inputLegendConfiguration.GadgetSelectedInputLegend._hints = Hints.ToIl2CppArray();
+        LegendConfig._hints = Hints.ToIl2CppArray();
+        Legend.SetInputHints(InteropStatics.ReinterpretCast<Il2CppSystem.Collections.Generic.List<InputHintConfiguration>, Il2CppSystem.Collections.Generic.IEnumerable<InputHintConfiguration>>(Hints.ToIl2CppList()));
     }
 }

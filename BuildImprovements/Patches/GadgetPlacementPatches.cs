@@ -45,6 +45,8 @@ static class GadgetItemPatches
         {
             PlacementInputDirector.OnGadgetSelected(__instance);
         }
+
+        AdditiveUIDirector.ModifyBottomInputLegendUI(HudUI.Instance.BottomInputLegend);
     }
     [HarmonyPostfix]
     [HarmonyPatch(nameof(GadgetItem.IsPlacementValid))]
