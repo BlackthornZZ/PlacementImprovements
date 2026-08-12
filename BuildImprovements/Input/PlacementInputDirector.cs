@@ -193,4 +193,8 @@ internal static class PlacementInputDirector
         }
         else ResetLock(GItem, true);
     }
+
+    // InputEvent callbacks
+    public static void GadgetLock_Performed(InputEventData Data) => MelonLogger.Msg("GadgetLock");
+    public static void GadgetEyedropper_Performed(InputEventData Data) => MelonLogger.Msg("Gadget Eyedropper");
 }

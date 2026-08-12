@@ -1,4 +1,5 @@
-﻿using Il2Cpp;
+﻿using BuildImprovements.Preferences;
+using Il2Cpp;
 using Il2CppMonomiPark.SlimeRancher.Input;
 using Il2CppSystem.Dynamic.Utils;
 using MelonLoader;
@@ -20,26 +21,48 @@ internal static class InputRegistrar
 {
     private static InputDirector InputDirector => GameContext.Instance.InputDirector;
 
+    internal struct InputEventStore
+    {
+        internal InputEvent GadgetLock;
+        internal InputEvent SmoothNudge;
+        internal InputEvent GadgetEyedrop;
+        internal InputEvent NudgeUp, NudgeDown;
+        internal InputEvent NudgeForward, NudgeBack, NudgeLeft, NudgeRight;
+    };
+
+    internal static InputEventStore EventStore = new();
+
     // In the future all our input checking will be moved to be registered here.
-    internal static void RegisterPlacementImprovementsInputs() { }
+    internal static void RegisterPlacementImprovementsInputs()
+    {
+        EventStore.GadgetLock = RegisterInputForKey(KeyCodeToKey(PreferenceDirector.PlacementLockBind), "Lock Gadget", PlacementInputDirector.GadgetLock_Performed);
+        EventStore.GadgetEyedrop = RegisterInputForKey(KeyCodeToKey(PreferenceDirector.GadgetEyedropperBind), "Gadget Eyedropper", PlacementInputDirector.GadgetEyedropper_Performed);
+
+        // Unused dummy actions. These are enabled like normal but are only used for display purposes, actual logic is still handled by InputEUtil.
+        EventStore.SmoothNudge = RegisterInputForKey(KeyCodeToKey(PreferenceDirector.SmoothNudgeBind), "Smooth Nudge");
+        EventStore.NudgeUp = RegisterInputForKey(KeyCodeToKey(PreferenceDirector.NudgeUpBind), "Nudge Up");
+        EventStore.NudgeDown = RegisterInputForKey(KeyCodeToKey(PreferenceDirector.NudgeDownBind), "Nudge Down");
+        EventStore.NudgeForward = RegisterInputForKey(KeyCodeToKey(PreferenceDirector.NudgeForwardBind), "Nudge Forward");
+        EventStore.NudgeBack = RegisterInputForKey(KeyCodeToKey(PreferenceDirector.NudgeBackwardBind), "Nudge Back");
+        EventStore.NudgeLeft = RegisterInputForKey(KeyCodeToKey(PreferenceDirector.NudgeLeftBind), "Nudge Left");
+        EventStore.NudgeRight = RegisterInputForKey(KeyCodeToKey(PreferenceDirector.NudgeRightBind), "Nudge Right");
+    }
 
     // Encapsulates everything necessary to set up a callback for Key. Only possible while the InputDirector._mainGame.Map.Asset is disabled.
-    public static InputEvent RegisterInputForKey(Key Key, string ActionName, Action<InputEventData>? Performed = null, Action<InputEventData>? Started = null, Action<InputEventData>? Canceled = null) => 
-        RegisterInput(InputControlFromKeyboardKey(Key), ActionName, Performed, Started, Canceled);
-    public static InputEvent RegisterInputForMouse(MouseButton Button, string ActionName, Action<InputEventData>? Performed = null, Action<InputEventData>? Started = null, Action<InputEventData>? Canceled = null) =>
-        RegisterInput(InputControlFromMouse(Button), ActionName, Performed, Started, Canceled);
+    public static InputEvent RegisterInputForKey(Key Key, string ActionName,  Action<InputEventData>? Performed = null, Action<InputEventData>? Started = null, Action<InputEventData>? Canceled = null, InputActionType ActionType = InputActionType.Button) => 
+        RegisterInput(InputControlFromKeyboardKey(Key), ActionName, Performed, Started, Canceled, ActionType);
+    public static InputEvent RegisterInputForMouse(MouseButton Button, string ActionName, Action<InputEventData>? Performed = null, Action<InputEventData>? Started = null, Action<InputEventData>? Canceled = null, InputActionType ActionType = InputActionType.Button) =>
+        RegisterInput(InputControlFromMouse(Button), ActionName, Performed, Started, Canceled, ActionType);
 
-    public static InputEvent RegisterInput(InputControl Control, string ActionName, Action<InputEventData>? Performed = null, Action<InputEventData>? Started = null, Action<InputEventData>? Canceled = null)
+    public static InputEvent RegisterInput(InputControl Control, string ActionName, Action<InputEventData>? Performed = null, Action<InputEventData>? Started = null, Action<InputEventData>? Canceled = null, InputActionType ActionType = InputActionType.Button)
     {
         InputBinding Binding = MakeInputBinding(ActionName, Control);
-        InputAction Action = MakeInputAction(ActionName, Binding);
+        InputAction Action = MakeInputAction(ActionName, Binding, ActionType);
         InputEvent Event = new(); 
         if(Performed != null)
             SubscribeToInputEvent(Event, Performed, Started, Canceled);
 
         InputEventBinding EventBinding = MakeEventBinding(Action, Event);
-
-        MelonLogger.Msg("Upon completing input registration the effective path of the InputBinding is " + Binding.effectivePath);
 
         return Event;
     }
@@ -49,16 +72,17 @@ internal static class InputRegistrar
         InputBinding Binding = new()
         {
             action = ActionName,
+            // This might not be necessary but I'll leave it in for now.
             path = Control.path.Replace("/Keyboard", "<Keyboard>"),
             groups = group
         };
 
         return Binding;
     }
-    public static InputAction MakeInputAction(string Name, InputBinding Binding) => MakeInputAction(Name, new[] {Binding});
-    public static InputAction MakeInputAction(string Name, InputBinding[] Bindings)
+    public static InputAction MakeInputAction(string Name, InputBinding Binding, InputActionType ActionType = InputActionType.Button) => MakeInputAction(Name, new[] {Binding}, ActionType);
+    public static InputAction MakeInputAction(string Name, InputBinding[] Bindings, InputActionType ActionType = InputActionType.Button)
     {
-        InputAction NewAction = InputActionSetupExtensions.AddAction(InputDirector._mainGame, Name, InputActionType.Button);
+        InputAction NewAction = InputActionSetupExtensions.AddAction(InputDirector._mainGame, Name, ActionType);
 
         foreach (var Binding in Bindings)
             NewAction.AddBinding(Binding);
