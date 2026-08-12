@@ -1,11 +1,13 @@
 ﻿using BuildImprovements.Input;
 using BuildImprovements.Preferences;
+using BuildImprovements.UI;
 using HarmonyLib;
 using Il2Cpp;
 using Il2CppMonomiPark.SlimeRancher;
 using Il2CppMonomiPark.SlimeRancher.Event;
 using Il2CppMonomiPark.SlimeRancher.Input;
 using Il2CppMonomiPark.SlimeRancher.Player.PlayerItems;
+using Il2CppMonomiPark.SlimeRancher.UI;
 using Il2CppMonomiPark.SlimeRancher.World;
 using UnityEngine;
 
@@ -43,10 +45,6 @@ static class GadgetItemPatches
         {
             PlacementInputDirector.OnGadgetSelected(__instance);
         }
-
-#if WITH_INPUT_LEGEND_MODIFICATION
-        AdditiveUIDirector.ModifyBottomInputLegendUI(HudUI.Instance.BottomInputLegend);
-#endif
     }
     [HarmonyPostfix]
     [HarmonyPatch(nameof(GadgetItem.IsPlacementValid))]

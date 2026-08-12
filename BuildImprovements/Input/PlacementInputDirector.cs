@@ -198,42 +198,4 @@ internal static class PlacementInputDirector
         }
         else ResetLock(GItem, true);
     }
-
-#if WITH_INPUT_LEGEND_MODIFICATION
-    public static InputEventBinding CreateInputEventBinding(KeyCode PrimaryKey, Action<InputEventData> Callback, string ActionName,
-        KeyCode? SecondaryKey = null,
-        Action<InputEventData>? SecondaryCallback = null)
-    {
-        InputAction Action = new InputAction();
-        Action.Rename(ActionName);
-
-        Action.AddBinding(KeyCodeToBinding(PrimaryKey));
-        if (SecondaryKey != null) 
-            Action.AddBinding(KeyCodeToBinding(SecondaryKey));
-
-        // this is wack.
-        InputEvent[] Events = SecondaryKey == null ? new InputEvent[] { new() } : new InputEvent[] { new(), new() };
-
-        Events[0].Performed += Callback;
-        if (SecondaryKey != null)
-        {
-            Events[1].Performed += (SecondaryCallback != null ? SecondaryCallback : Callback);
-        }
-
-        InputEventBinding EventBinding = new InputEventBinding();
-
-        EventBinding._inputEvents = new Il2CppReferenceArray<InputEvent>(Events);
-        EventBinding.ActionInstance = Action;
-
-        InputMap.AddAction(Action.name);
-        GameContext.Instance.InputDirector.InputActionController._inputBindings.AddLast(EventBinding);
-
-        return EventBinding;
-    }
-    private static string KeyCodeToBinding(KeyCode? keyCode)
-    {
-        if (keyCode == null) return "";
-        return "<Keyboard>/#("+keyCode.ToString()+")";
-    }
-#endif
 }
