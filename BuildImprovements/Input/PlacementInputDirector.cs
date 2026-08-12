@@ -22,11 +22,6 @@ using UnityEngine.Localization;
 namespace BuildImprovements.Input;
 internal static class PlacementInputDirector
 {
-    internal static InputEventBinding NudgeEventBinding = null!;
-    internal static InputEventBinding LockBinding = null!;
-    internal static InputEventBinding ResetBinding = null!;
-    internal static InputActionMap InputMap = null!;
-
     internal static readonly LocalizedString MaxNudgeString = LanguageEUtil.AddTranslation("Max Nudge Distance Reached");
     internal static readonly LocalizedString EyedropperNoneAvailableString = LanguageEUtil.AddTranslation("None In Storage");
     internal static readonly LocalizedString EyedropperNoTarget = LanguageEUtil.AddTranslation("Not a Gadget");
