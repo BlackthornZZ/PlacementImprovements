@@ -26,14 +26,11 @@ static class GadgetItemPatches
 
         PatchHelper.SetGadgetVisuals(PatchHelper.CurrentValidity, __instance);
 
-        // This code specifically is only relevant for the UpdateFootprint call inside of GadgetItem::PlaceGadgetEvent.
-        // To have this run *only* in there however, would require both a prefix and postfix on PlaceGadgetEvent,
-        // leading to unnecessary overhead: always running it does not have any side-effects.
-        // However, if other mods depend on these variables I could consider adding a compatibility check that ensures this only runs in GadgetItem::PlaceGadgetEvent.
-        __instance._isGrounded |= PreferenceDirector.bIgnorePlayerGroundedState;
+        // For GadgetItem::PlaceGadgetEvent.
         if (__instance._isPlacementBlocked)
             __instance._isPlacementBlocked = PreferenceDirector.bAllowClipping ? false : true;
         __instance._isPlacementValid |= PreferenceDirector.bAllowSlopedPlacementAngle;
+        __instance._isFootprintVisible |= PlacementInputDirector.bPlacementLocked;
 
         __instance._gadgetDirector._CanPlaceSelectedGadget_k__BackingField.Set(PatchHelper.CurrentValidity != EGadgetValidity.GV_Invalid);
     }
