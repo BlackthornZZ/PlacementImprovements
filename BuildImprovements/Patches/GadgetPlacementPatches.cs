@@ -100,7 +100,7 @@ static class DisableGadgetModeTriggerPatches
     static bool PrismacoreHarmonized()
     {
         CoreRoomController PrismacoreController = BossFightController.Instance._coreRoomController;
-        return PrismacoreController._eventDirector.GetRecordEntryForEvent(InteropStatics.ReinterpretCast<StaticGameEvent, IGameEvent>(PrismacoreController._bossFightCompleted)) != null;
+        return PrismacoreController._eventDirector.GetRecordEntryForEvent(PrismacoreController._bossFightCompleted.Cast<IGameEvent>()) != null;
     }
     [HarmonyPrefix]
     [HarmonyPatch(nameof(DisableGadgetModeTrigger.OnTriggerEnter))]
