@@ -50,6 +50,12 @@ public static class PreferenceDirector
         get => SettingPreferences.GetEntry<bool>("InfiniteLinkedRange").Value;
         private set => SetConfigValue<bool>(SettingPreferences, "InfiniteLinkedRange", value);
     }
+    internal static bool bInvertSmoothNudge 
+    {
+        get => SettingPreferences.GetEntry<bool>("InvertSmoothNudge").Value;
+        private set => SetConfigValue<bool>(SettingPreferences, "InvertSmoothNudge", value);
+    }
+
 
     // Placement colors
     // Public for use by SR2MP.
@@ -126,7 +132,7 @@ public static class PreferenceDirector
     }
 
     // Nudging features
-    internal static bool bSmoothNudge => InputEUtil.OnKey(SmoothNudgeBind);
+    internal static bool bSmoothNudge => bInvertSmoothNudge ^ InputEUtil.OnKey(SmoothNudgeBind);
     internal static float NudgeIncrementScale
     {
         get => SettingPreferences.GetEntry<float>("NudgeIncrement").Value;
@@ -233,6 +239,12 @@ public static class PreferenceDirector
             default_value: 2f,
             display_name: "Smooth Nudge Speed",
             description: "When Smooth Nudge is ON: the speed at which the placement will move when nudging.");
+
+        SettingPreferences.CreateEntry(
+            identifier: "InvertSmoothNudge",
+            default_value: false,
+            display_name: "Invert Smooth Nudge",
+            description: "When this is turned on, smooth nudging will be the default, while holding its key results in the incremental nudge being enabled.\nNOTE: Input display labels are unaffected by this change and will continue to display \"Smooth\".");
 
 
         // == Keybindings ==
