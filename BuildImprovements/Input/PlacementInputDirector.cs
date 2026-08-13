@@ -1,10 +1,12 @@
-﻿using BuildImprovements.Preferences;
+﻿using BuildImprovements.Injected;
+using BuildImprovements.Preferences;
 using BuildImprovements.UI;
 using Il2Cpp;
 using Il2CppMonomiPark.SlimeRancher.Input;
 using Il2CppMonomiPark.SlimeRancher.Player;
 using Il2CppMonomiPark.SlimeRancher.Player.PlayerItems;
 using Il2CppMonomiPark.SlimeRancher.UI;
+using Il2CppMonomiPark.SlimeRancher.UI.Gadget;
 using Il2CppMonomiPark.SlimeRancher.Util.Extensions;
 using Il2CppMonomiPark.SlimeRancher.World;
 using Il2CppSystem;
@@ -86,6 +88,8 @@ internal static class PlacementInputDirector
         LockedPlacementPosition = Vector3.zero;
         InitialLockedPlacementPosition = Vector3.zero;
         LockedPlacementRotation = Quaternion.identity;
+
+        HudUI.Instance.BottomInputLegend.Configure(HudUI.Instance.BottomInputLegend.gameObject.GetComponent<GadgetInputLegendUpdater>()._inputLegendConfiguration.GadgetSelectedInputLegend);
     }
 
     public static void DoNudge(GadgetItem GItem)
@@ -114,6 +118,8 @@ internal static class PlacementInputDirector
         NudgeDelta *= NudgeDeltaMultiplier;
 
         if (NudgeDelta.sqrMagnitude <= 0) return;
+
+        SceneContext.Instance.eventDirector.RaiseEvent(NudgeGameEventQueryComponent.OnNudgedEvent);
 
         if((InitialLockedPlacementPosition - (LockedPlacementPosition + NudgeDelta)).sqrMagnitude >= 100)
         {
@@ -178,6 +184,7 @@ internal static class PlacementInputDirector
             if(SceneContext.Instance.TutorialDirector._currPopup == null)
                 AdditiveUIDirector.PlayAdvancedMovementTutorial();
 
+            HudUI.Instance.BottomInputLegend.Configure(AdditiveUIDirector.GadgetLockedInputLegend);
         }
         else ResetLock(GItem, true);
     }
