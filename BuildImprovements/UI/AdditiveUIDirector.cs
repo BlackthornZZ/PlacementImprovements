@@ -1,7 +1,10 @@
 ﻿
+using BuildImprovements.Injected;
 using BuildImprovements.Input;
 using Il2Cpp;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using Il2CppMonomiPark.SlimeRancher.Event;
+using Il2CppMonomiPark.SlimeRancher.Event.Query;
 using Il2CppMonomiPark.SlimeRancher.Input;
 using Il2CppMonomiPark.SlimeRancher.Player.PlayerItems;
 using Il2CppMonomiPark.SlimeRancher.Tutorial;
@@ -37,36 +40,44 @@ internal static class AdditiveUIDirector
 
     internal static TutorialDefinition MakeAdvancedMovementTutorial()
     {
-        TutorialDefinition Tutorial = new TutorialDefinition();
-        Tutorial.TitleText = LanguageEUtil.AddTranslation("Advanced Gadget Movement");
-        Tutorial.BodyText = LanguageEUtil.AddTranslation("You locked a gadget in place. Try nudging it around!");
-        Tutorial.AutoComplete = true;
-        Tutorial.CheckFinishOnStart = false;
-        Tutorial.CompletionUITime = 10f;
-        Tutorial.OverrideCompletionUITime = true;
+        TutorialDefinition Tutorial = new TutorialDefinition
+        {
+            TitleText = LanguageEUtil.AddTranslation("Advanced Gadget Movement"),
+            BodyText = LanguageEUtil.AddTranslation("You locked a gadget in place. Try nudging it around!"),
+            CheckFinishOnStart = false,
+            AutoComplete=true,
+            CompletionUITime = 20f,
+            OverrideCompletionUITime = true,
 #if DEBUG
-        Tutorial.AllowReplay = true;
+            AllowReplay = true,
 #else
         Tutorial.AllowReplay = false;
 #endif
-        Tutorial.CompletionEvent = new();
+        };
+
         List<TutorialDefinition.TutorialControlLine> Instructions = new();
 
-        TutorialDefinition.TutorialControlLine Control = new();
-        Control.Description = LanguageEUtil.AddTranslation("Vertical");
-        Control.Input = InputRegistrar.EventStore.NudgeUpDown;
-        Control.ShowMultipleInputs = true;
+        TutorialDefinition.TutorialControlLine Control = new()
+        {
+            Description = LanguageEUtil.AddTranslation("Vertical"),
+            Input = InputRegistrar.EventStore.NudgeUpDown,
+            ShowMultipleInputs = true
+        };
         Instructions.Add(Control);
 
-        Control = new();
-        Control.Description = LanguageEUtil.AddTranslation("Horizontal");
-        Control.Input = InputRegistrar.EventStore.NudgeHorizontal;
-        Control.ShowMultipleInputs = true;
+        Control = new()
+        {
+            Description = LanguageEUtil.AddTranslation("Horizontal"),
+            Input = InputRegistrar.EventStore.NudgeHorizontal,
+            ShowMultipleInputs = true
+        };
         Instructions.Add(Control);
 
-        Control = new();
-        Control.Description = LanguageEUtil.AddTranslation("Smooth Nudge");
-        Control.Input = InputRegistrar.EventStore.SmoothNudge;
+        Control = new()
+        {
+            Description = LanguageEUtil.AddTranslation("Smooth Nudge"),
+            Input = InputRegistrar.EventStore.SmoothNudge
+        };
         Instructions.Add(Control);
 
         Tutorial.Instructions = Instructions.ToIl2CppArray();
