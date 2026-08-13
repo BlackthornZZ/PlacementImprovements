@@ -23,12 +23,20 @@ internal static class InputRegistrar
 
     internal struct InputEventStore
     {
-        internal InputEvent GadgetLock;
-        internal InputEvent SmoothNudge;
-        internal InputEvent GadgetEyedrop;
-        internal InputEvent NudgeUpDown; 
-        internal InputEvent NudgeForwardBack, NudgeLeftRight; // WS, AD
-        internal InputEvent NudgeHorizontal; // WASD
+        internal InputEventBinding GadgetLockBinding;
+        internal InputEventBinding SmoothNudgeBinding;
+        internal InputEventBinding GadgetEyedropBinding;
+        internal InputEventBinding NudgeUpDownBinding; 
+        internal InputEventBinding NudgeForwardBackBinding, NudgeLeftRightBinding; // WS, AD
+        internal InputEventBinding NudgeHorizontalBinding; // WASD
+
+        internal InputEvent GadgetLock => GadgetLockBinding.InputEvents[0];
+        internal InputEvent SmoothNudge => SmoothNudgeBinding.InputEvents[0];
+        internal InputEvent GadgetEyedrop => GadgetEyedropBinding.InputEvents[0];
+        internal InputEvent NudgeUpDown => NudgeUpDownBinding.InputEvents[0];
+        internal InputEvent NudgeForwardBack => NudgeForwardBackBinding.InputEvents[0];
+        internal InputEvent NudgeLeftRight => NudgeLeftRightBinding.InputEvents[0];
+        internal InputEvent NudgeHorizontal => NudgeHorizontalBinding.InputEvents[0];
     };
 
     internal static InputEventStore EventStore = new();
@@ -36,27 +44,75 @@ internal static class InputRegistrar
     // In the future all our input checking will be moved to be registered here.
     internal static void RegisterPlacementImprovementsInputs()
     {
-        EventStore.GadgetLock = RegisterInputForKey(KeyCodeToKey(PreferenceDirector.PlacementLockBind), "Lock Gadget", PlacementInputDirector.GadgetLock_Performed);
-        EventStore.GadgetEyedrop = PreferenceDirector.bGadgetEyedropperMiddleClick ? RegisterInputForMouse(MouseButton.Middle, "Gadget Eyedropper", PlacementInputDirector.GadgetEyedropper_Performed) :
+        EventStore.GadgetLockBinding = RegisterInputForKey(KeyCodeToKey(PreferenceDirector.PlacementLockBind), "Lock Gadget", PlacementInputDirector.GadgetLock_Performed);
+        EventStore.GadgetEyedropBinding = PreferenceDirector.bGadgetEyedropperMiddleClick ? RegisterInputForMouse(MouseButton.Middle, "Gadget Eyedropper", PlacementInputDirector.GadgetEyedropper_Performed) :
             RegisterInputForKey(KeyCodeToKey(PreferenceDirector.GadgetEyedropperBind), "Gadget Eyedropper", PlacementInputDirector.GadgetEyedropper_Performed);
 
         // Unused dummy actions. These are enabled like normal but are only used for display purposes, actual logic is still handled by InputEUtil.
-        EventStore.SmoothNudge = RegisterInputForKey(KeyCodeToKey(PreferenceDirector.SmoothNudgeBind), "Smooth Nudge");
-        EventStore.NudgeUpDown = RegisterInputForKeys(new[] { KeyCodeToKey(PreferenceDirector.NudgeUpBind), KeyCodeToKey(PreferenceDirector.NudgeDownBind) }, "Nudge Up/Down");
-        EventStore.NudgeForwardBack = RegisterInputForKeys(new[] { KeyCodeToKey(PreferenceDirector.NudgeForwardBind), KeyCodeToKey(PreferenceDirector.NudgeBackwardBind) }, "Nudge Forward/Back");
-        EventStore.NudgeLeftRight = RegisterInputForKeys(new[] { KeyCodeToKey(PreferenceDirector.NudgeLeftBind), KeyCodeToKey(PreferenceDirector.NudgeRightBind) } , "Nudge Left/Right");
-        EventStore.NudgeHorizontal = RegisterInputForKeys(
+        EventStore.SmoothNudgeBinding = RegisterInputForKey(KeyCodeToKey(PreferenceDirector.SmoothNudgeBind), "Smooth Nudge");
+        EventStore.NudgeUpDownBinding = RegisterInputForKeys(new[] { KeyCodeToKey(PreferenceDirector.NudgeUpBind), KeyCodeToKey(PreferenceDirector.NudgeDownBind) }, "Nudge Up/Down");
+        EventStore.NudgeForwardBackBinding = RegisterInputForKeys(new[] { KeyCodeToKey(PreferenceDirector.NudgeForwardBind), KeyCodeToKey(PreferenceDirector.NudgeBackwardBind) }, "Nudge Forward/Back");
+        EventStore.NudgeLeftRightBinding = RegisterInputForKeys(new[] { KeyCodeToKey(PreferenceDirector.NudgeLeftBind), KeyCodeToKey(PreferenceDirector.NudgeRightBind) } , "Nudge Left/Right");
+        EventStore.NudgeHorizontalBinding = RegisterInputForKeys(
             new[] { KeyCodeToKey(PreferenceDirector.NudgeForwardBind), KeyCodeToKey(PreferenceDirector.NudgeLeftBind), KeyCodeToKey(PreferenceDirector.NudgeBackwardBind), KeyCodeToKey(PreferenceDirector.NudgeRightBind) }, 
             "Nudge Horizontal");
     }
 
+    // Goes through all event bindings in the InputEventStore and modifies their controls to match the preference director.
+    internal static void ResetPlacementImprovementsInputs()
+    {
+        ModifyControlsForEventBinding(EventStore.GadgetLockBinding, InputControlFromKeyboardKey(KeyCodeToKey(PreferenceDirector.PlacementLockBind)));
+        ModifyControlsForEventBinding(EventStore.GadgetEyedropBinding, PreferenceDirector.bGadgetEyedropperMiddleClick ? 
+            InputControlFromMouse(MouseButton.Middle) : InputControlFromKeyboardKey(KeyCodeToKey(PreferenceDirector.GadgetEyedropperBind)));
+
+        // Unused dummy actions for UI
+        ModifyControlsForEventBinding(EventStore.SmoothNudgeBinding, InputControlFromKeyboardKey(KeyCodeToKey(PreferenceDirector.SmoothNudgeBind)));
+        ModifyControlsForEventBinding(EventStore.NudgeUpDownBinding, new[] {
+            InputControlFromKeyboardKey(KeyCodeToKey(PreferenceDirector.NudgeUpBind)),
+            InputControlFromKeyboardKey(KeyCodeToKey(PreferenceDirector.NudgeDownBind)),
+        });
+        ModifyControlsForEventBinding(EventStore.NudgeForwardBackBinding, new[] {
+            InputControlFromKeyboardKey(KeyCodeToKey(PreferenceDirector.NudgeForwardBind)),
+            InputControlFromKeyboardKey(KeyCodeToKey(PreferenceDirector.NudgeBackwardBind)),
+        });
+        ModifyControlsForEventBinding(EventStore.NudgeLeftRightBinding, new[] { 
+            InputControlFromKeyboardKey(KeyCodeToKey(PreferenceDirector.NudgeLeftBind)),
+            InputControlFromKeyboardKey(KeyCodeToKey(PreferenceDirector.NudgeRightBind)),
+        });
+        ModifyControlsForEventBinding(EventStore.NudgeHorizontalBinding, new[] {
+            InputControlFromKeyboardKey(KeyCodeToKey(PreferenceDirector.NudgeForwardBind)),
+            InputControlFromKeyboardKey(KeyCodeToKey(PreferenceDirector.NudgeLeftBind)),
+            InputControlFromKeyboardKey(KeyCodeToKey(PreferenceDirector.NudgeBackwardBind)),
+            InputControlFromKeyboardKey(KeyCodeToKey(PreferenceDirector.NudgeRightBind)),
+        });
+    }
+
+    public static void ModifyControlsForEventBinding(InputEventBinding EventBinding, InputControl NewControl) => ModifyControlsForEventBinding(EventBinding, new[] { NewControl });
+    public static void ModifyControlsForEventBinding(InputEventBinding EventBinding, InputControl[] NewControls)
+    {
+        EventBinding.UnbindInput();
+
+        string PrevName = EventBinding.ActionInstance.name;
+        EventBinding.ActionInstance.RemoveAction();
+
+        InputBinding[] Bindings = new InputBinding[NewControls.Length];
+        for(int i = 0; i <  NewControls.Length; i++)
+            Bindings[i] = MakeInputBinding(PrevName, NewControls[i]);
+
+        EventBinding.ActionInstance = MakeInputAction(PrevName, Bindings);
+        EventBinding._input = InputActionReference.Create(EventBinding.ActionInstance);
+
+
+        EventBinding.BindInput();
+    }
+
     // Encapsulates everything necessary to set up a callback for Key. Only possible while the InputDirector._mainGame.Map.Asset is disabled.
-    public static InputEvent RegisterInputForKey(Key Key, string ActionName,  Action<InputEventData>? Performed = null, Action<InputEventData>? Started = null, Action<InputEventData>? Canceled = null, InputActionType ActionType = InputActionType.Button) => 
+    public static InputEventBinding RegisterInputForKey(Key Key, string ActionName,  Action<InputEventData>? Performed = null, Action<InputEventData>? Started = null, Action<InputEventData>? Canceled = null, InputActionType ActionType = InputActionType.Button) => 
         RegisterInputForControl(InputControlFromKeyboardKey(Key), ActionName, Performed, Started, Canceled, ActionType);
-    public static InputEvent RegisterInputForMouse(MouseButton Button, string ActionName, Action<InputEventData>? Performed = null, Action<InputEventData>? Started = null, Action<InputEventData>? Canceled = null, InputActionType ActionType = InputActionType.Button) =>
+    public static InputEventBinding RegisterInputForMouse(MouseButton Button, string ActionName, Action<InputEventData>? Performed = null, Action<InputEventData>? Started = null, Action<InputEventData>? Canceled = null, InputActionType ActionType = InputActionType.Button) =>
         RegisterInputForControl(InputControlFromMouse(Button), ActionName, Performed, Started, Canceled, ActionType);
 
-    public static InputEvent RegisterInputForKeys(Key[] Keys, string ActionName, Action<InputEventData>? Performed = null, Action<InputEventData>? Started = null, Action<InputEventData>? Canceled = null, InputActionType ActionType = InputActionType.Button)
+    public static InputEventBinding RegisterInputForKeys(Key[] Keys, string ActionName, Action<InputEventData>? Performed = null, Action<InputEventData>? Started = null, Action<InputEventData>? Canceled = null, InputActionType ActionType = InputActionType.Button)
     {
         InputControl[] Controls = new InputControl[Keys.Length];
 
@@ -66,20 +122,10 @@ internal static class InputRegistrar
         return RegisterInputMultiControl(Controls, ActionName, Performed, Started, Canceled, ActionType);
     }
 
-    public static InputEvent RegisterInputForControl(InputControl Control, string ActionName, Action<InputEventData>? Performed = null, Action<InputEventData>? Started = null, Action<InputEventData>? Canceled = null, InputActionType ActionType = InputActionType.Button)
-    {
-        InputBinding Binding = MakeInputBinding(ActionName, Control);
-        InputAction Action = MakeInputAction(ActionName, Binding, ActionType);
-        InputEvent Event = new(); 
-        if(Performed != null)
-            SubscribeToInputEvent(Event, Performed, Started, Canceled);
+    public static InputEventBinding RegisterInputForControl(InputControl Control, string ActionName, Action<InputEventData>? Performed = null, Action<InputEventData>? Started = null, Action<InputEventData>? Canceled = null, InputActionType ActionType = InputActionType.Button)
+        => RegisterInputMultiControl(new[] { Control }, ActionName, Performed, Started, Canceled, ActionType);
 
-        InputEventBinding EventBinding = MakeEventBinding(Action, Event);
-
-        return Event;
-    }
-
-    public static InputEvent RegisterInputMultiControl(InputControl[] Controls, string ActionName, Action<InputEventData>? Performed = null, Action<InputEventData>? Started = null, Action<InputEventData>? Canceled = null, InputActionType ActionType = InputActionType.Button)
+    public static InputEventBinding RegisterInputMultiControl(InputControl[] Controls, string ActionName, Action<InputEventData>? Performed = null, Action<InputEventData>? Started = null, Action<InputEventData>? Canceled = null, InputActionType ActionType = InputActionType.Button)
     {
         InputBinding[] Bindings = new InputBinding[Controls.Length];
 
@@ -93,7 +139,7 @@ internal static class InputRegistrar
 
         InputEventBinding EventBinding = MakeEventBinding(Action, Event);
 
-        return Event;
+        return EventBinding;
     }
 
     public static InputBinding MakeInputBinding(string ActionName, InputControl Control, string group = "PC_KeyboardMouse")

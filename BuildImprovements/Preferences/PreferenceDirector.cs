@@ -1,4 +1,6 @@
-﻿using BuildImprovements.Patches;
+﻿using BuildImprovements.Input;
+using BuildImprovements.Patches;
+using Il2Cpp;
 using MelonLoader;
 using MelonLoader.Preferences;
 using Starlight.Utils;
@@ -304,6 +306,9 @@ public static class PreferenceDirector
             description: "Keybind for copying a gadget from the world to start building it."
             );
 
+        SubscribeToConfigChanges(KeybindPreferences,
+            new[] { "LockPlacementBind", "NudgeUpBind", "NudgeDownBind", "NudgeForwardBind", "NudgeLeftBind", "NudgeRightBind", "NudgeBackwardBind", "SmoothNudgeBind", "GadgetEyedropperMiddleClick", "GadgetEyedropperBind" },
+            AnyKeybindChanged);
 
     }
     // The methods you pass must have the following outline:
@@ -318,6 +323,13 @@ public static class PreferenceDirector
             Category.GetEntry(Identifiers[i]).OnEntryValueChangedUntyped.Subscribe(Methods[i]);
     }
 
+    // Link all identifiers to one method.
+    private static void SubscribeToConfigChanges(MelonPreferences_Category Category, string[] Identifiers, LemonAction<object, object> Method)
+    {
+        foreach(string ID in Identifiers)
+            Category.GetEntry(ID).OnEntryValueChangedUntyped.Subscribe(Method);
+    }
+
     // Delegates that are called when a config is changed
     // ==========
     private static void ValidColorChanged(object OldValue, object NewValue)
@@ -327,6 +339,12 @@ public static class PreferenceDirector
     private static void InvalidColorChanged(object OldValue, object NewValue)
     {
         PatchHelper.SetGadgetPlacementColor(InvalidColor, bUseInvalidColor: true);
+    }
+    private static void AnyKeybindChanged(object OldValue, object NewValue)
+    {
+        GameContext.Instance.InputDirector._mainGame.Map.asset.Disable();
+        InputRegistrar.ResetPlacementImprovementsInputs();
+        GameContext.Instance.InputDirector._mainGame.Map.asset.Enable();
     }
 
     // Helpers
