@@ -51,16 +51,43 @@ internal static class InputRegistrar
 
     // Encapsulates everything necessary to set up a callback for Key. Only possible while the InputDirector._mainGame.Map.Asset is disabled.
     public static InputEvent RegisterInputForKey(Key Key, string ActionName,  Action<InputEventData>? Performed = null, Action<InputEventData>? Started = null, Action<InputEventData>? Canceled = null, InputActionType ActionType = InputActionType.Button) => 
-        RegisterInput(InputControlFromKeyboardKey(Key), ActionName, Performed, Started, Canceled, ActionType);
+        RegisterInputForControl(InputControlFromKeyboardKey(Key), ActionName, Performed, Started, Canceled, ActionType);
     public static InputEvent RegisterInputForMouse(MouseButton Button, string ActionName, Action<InputEventData>? Performed = null, Action<InputEventData>? Started = null, Action<InputEventData>? Canceled = null, InputActionType ActionType = InputActionType.Button) =>
-        RegisterInput(InputControlFromMouse(Button), ActionName, Performed, Started, Canceled, ActionType);
+        RegisterInputForControl(InputControlFromMouse(Button), ActionName, Performed, Started, Canceled, ActionType);
 
-    public static InputEvent RegisterInput(InputControl Control, string ActionName, Action<InputEventData>? Performed = null, Action<InputEventData>? Started = null, Action<InputEventData>? Canceled = null, InputActionType ActionType = InputActionType.Button)
+    public static InputEvent RegisterInputForKeys(Key[] Keys, string ActionName, Action<InputEventData>? Performed = null, Action<InputEventData>? Started = null, Action<InputEventData>? Canceled = null, InputActionType ActionType = InputActionType.Button)
+    {
+        InputControl[] Controls = new InputControl[Keys.Length];
+
+        for (int i = 0; i < Keys.Length; i++)
+            Controls[i] = InputControlFromKeyboardKey(Keys[i]);
+
+        return RegisterInputMultiControl(Controls, ActionName, Performed, Started, Canceled, ActionType);
+    }
+
+    public static InputEvent RegisterInputForControl(InputControl Control, string ActionName, Action<InputEventData>? Performed = null, Action<InputEventData>? Started = null, Action<InputEventData>? Canceled = null, InputActionType ActionType = InputActionType.Button)
     {
         InputBinding Binding = MakeInputBinding(ActionName, Control);
         InputAction Action = MakeInputAction(ActionName, Binding, ActionType);
         InputEvent Event = new(); 
         if(Performed != null)
+            SubscribeToInputEvent(Event, Performed, Started, Canceled);
+
+        InputEventBinding EventBinding = MakeEventBinding(Action, Event);
+
+        return Event;
+    }
+
+    public static InputEvent RegisterInputMultiControl(InputControl[] Controls, string ActionName, Action<InputEventData>? Performed = null, Action<InputEventData>? Started = null, Action<InputEventData>? Canceled = null, InputActionType ActionType = InputActionType.Button)
+    {
+        InputBinding[] Bindings = new InputBinding[Controls.Length];
+
+        for (int i = 0; i < Controls.Length; i++)
+            Bindings[i] = MakeInputBinding(ActionName, Controls[i]);
+
+        InputAction Action = MakeInputAction(ActionName, Bindings, ActionType);
+        InputEvent Event = new();
+        if (Performed != null)
             SubscribeToInputEvent(Event, Performed, Started, Canceled);
 
         InputEventBinding EventBinding = MakeEventBinding(Action, Event);
