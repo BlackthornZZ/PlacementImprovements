@@ -185,6 +185,8 @@ internal static class PlacementInputDirector
     // InputEvent callbacks
     public static void GadgetLock_Performed(InputEventData Data)
     {
+        if (!PreferenceDirector.bAllowAdvancedMovement) return;
+
         GadgetItem GItem = SceneContext.Instance.player.GetComponent<PlayerItemController>().GadgetItem;
 
         if (GItem._isFootprintVisible && GItem._gadgetDirector.SelectedSlottedGadget != null)
