@@ -35,7 +35,6 @@ internal static class PlacementInputDirector
     internal static Quaternion LockedPlacementRotation = Quaternion.identity;
     internal static bool bPlacementLocked = false;
     public static void OnGadgetSelected(GadgetItem GItem) => ResetLock(GItem, false);
-
     public static void OnInputDirectorUpdate(GadgetItem GItem) => CheckInputs(GItem, SceneContext.Instance.PlayerState.GadgetModeActive);
     public static void OnPostGadgetItemFootprintUpdate(GadgetItem GItem) 
     {
@@ -84,7 +83,7 @@ internal static class PlacementInputDirector
         InitialLockedPlacementPosition = Vector3.zero;
         LockedPlacementRotation = Quaternion.identity;
 
-        HudUI.Instance.BottomInputLegend.Configure(HudUI.Instance.BottomInputLegend.gameObject.GetComponent<GadgetInputLegendUpdater>()._inputLegendConfiguration.GadgetSelectedInputLegend);
+     
     }
 
     public static void DoNudge(GadgetItem GItem)
@@ -169,6 +168,7 @@ internal static class PlacementInputDirector
             return;
 
         bPlacementLocked = bNewPlacementLocked;
+        HudUI.Instance.BottomInputLegend.gameObject.GetComponent<GadgetInputLegendUpdater>().UpdateInputLegend();
 
         if (bNewPlacementLocked)
         {
@@ -178,8 +178,6 @@ internal static class PlacementInputDirector
 
             if(SceneContext.Instance.TutorialDirector._currPopup == null)
                 AdditiveUIDirector.PlayAdvancedMovementTutorial();
-
-            HudUI.Instance.BottomInputLegend.Configure(AdditiveUIDirector.GadgetLockedInputLegend);
         }
         else ResetLock(GItem, true);
     }
