@@ -26,7 +26,7 @@ internal static class InputRegistrar
         internal InputEvent GadgetLock;
         internal InputEvent SmoothNudge;
         internal InputEvent GadgetEyedrop;
-        internal InputEvent NudgeUp, NudgeDown;
+        internal InputEvent NudgeUpDown;
         internal InputEvent NudgeForwardBack, NudgeLeftRight;
     };
 
@@ -41,8 +41,7 @@ internal static class InputRegistrar
 
         // Unused dummy actions. These are enabled like normal but are only used for display purposes, actual logic is still handled by InputEUtil.
         EventStore.SmoothNudge = RegisterInputForKey(KeyCodeToKey(PreferenceDirector.SmoothNudgeBind), "Smooth Nudge");
-        EventStore.NudgeUp = RegisterInputForKey(KeyCodeToKey(PreferenceDirector.NudgeUpBind), "Nudge Up");
-        EventStore.NudgeDown = RegisterInputForKey(KeyCodeToKey(PreferenceDirector.NudgeDownBind), "Nudge Down");
+        EventStore.NudgeUpDown = RegisterInputForKeys(new[] { KeyCodeToKey(PreferenceDirector.NudgeUpBind), KeyCodeToKey(PreferenceDirector.NudgeDownBind) }, "Nudge Up/Down");
         EventStore.NudgeForwardBack = RegisterInputForKeys(new[] { KeyCodeToKey(PreferenceDirector.NudgeForwardBind), KeyCodeToKey(PreferenceDirector.NudgeBackwardBind) }, "Nudge Forward/Back");
         EventStore.NudgeLeftRight = RegisterInputForKeys(new[] { KeyCodeToKey(PreferenceDirector.NudgeLeftBind), KeyCodeToKey(PreferenceDirector.NudgeRightBind) } , "Nudge Left/Right");
     }
