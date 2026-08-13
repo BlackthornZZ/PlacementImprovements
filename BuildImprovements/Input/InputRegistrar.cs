@@ -26,8 +26,9 @@ internal static class InputRegistrar
         internal InputEvent GadgetLock;
         internal InputEvent SmoothNudge;
         internal InputEvent GadgetEyedrop;
-        internal InputEvent NudgeUpDown;
-        internal InputEvent NudgeForwardBack, NudgeLeftRight;
+        internal InputEvent NudgeUpDown; 
+        internal InputEvent NudgeForwardBack, NudgeLeftRight; // WS, AD
+        internal InputEvent NudgeHorizontal; // WASD
     };
 
     internal static InputEventStore EventStore = new();
@@ -44,6 +45,9 @@ internal static class InputRegistrar
         EventStore.NudgeUpDown = RegisterInputForKeys(new[] { KeyCodeToKey(PreferenceDirector.NudgeUpBind), KeyCodeToKey(PreferenceDirector.NudgeDownBind) }, "Nudge Up/Down");
         EventStore.NudgeForwardBack = RegisterInputForKeys(new[] { KeyCodeToKey(PreferenceDirector.NudgeForwardBind), KeyCodeToKey(PreferenceDirector.NudgeBackwardBind) }, "Nudge Forward/Back");
         EventStore.NudgeLeftRight = RegisterInputForKeys(new[] { KeyCodeToKey(PreferenceDirector.NudgeLeftBind), KeyCodeToKey(PreferenceDirector.NudgeRightBind) } , "Nudge Left/Right");
+        EventStore.NudgeHorizontal = RegisterInputForKeys(
+            new[] { KeyCodeToKey(PreferenceDirector.NudgeForwardBind), KeyCodeToKey(PreferenceDirector.NudgeLeftBind), KeyCodeToKey(PreferenceDirector.NudgeBackwardBind), KeyCodeToKey(PreferenceDirector.NudgeRightBind) }, 
+            "Nudge Horizontal");
     }
 
     // Encapsulates everything necessary to set up a callback for Key. Only possible while the InputDirector._mainGame.Map.Asset is disabled.

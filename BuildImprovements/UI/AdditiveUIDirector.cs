@@ -39,7 +39,7 @@ internal static class AdditiveUIDirector
     {
         TutorialDefinition Tutorial = new TutorialDefinition();
         Tutorial.TitleText = LanguageEUtil.AddTranslation("Advanced Gadget Movement");
-        Tutorial.BodyText = LanguageEUtil.AddTranslation("You locked a gadget in place. You can now walk around it without it moving or rotating!\nTry nudging it around! You can nudge in increments or smoothly over time, vertically or horizontally.");
+        Tutorial.BodyText = LanguageEUtil.AddTranslation("You locked a gadget in place. Try nudging it around!");
         Tutorial.AutoComplete = true;
         Tutorial.CheckFinishOnStart = false;
         Tutorial.CompletionUITime = 10f;
@@ -50,23 +50,26 @@ internal static class AdditiveUIDirector
         Tutorial.AllowReplay = false;
 #endif
         Tutorial.CompletionEvent = new();
-        List<TutorialDefinition.TutorialControlLine> Controls = new();
+        List<TutorialDefinition.TutorialControlLine> Instructions = new();
 
         TutorialDefinition.TutorialControlLine Control = new();
-        Control.Description = LanguageEUtil.AddTranslation("Nudge Vertically");
-        Controls.Add(Control);
+        Control.Description = LanguageEUtil.AddTranslation("Vertical");
+        Control.Input = InputRegistrar.EventStore.NudgeUpDown;
+        Control.ShowMultipleInputs = true;
+        Instructions.Add(Control);
 
         Control = new();
-        Control.Description = LanguageEUtil.AddTranslation("Nudge Horizontally");
-        Controls.Add(Control);
+        Control.Description = LanguageEUtil.AddTranslation("Horizontal");
+        Control.Input = InputRegistrar.EventStore.NudgeHorizontal;
+        Control.ShowMultipleInputs = true;
+        Instructions.Add(Control);
 
         Control = new();
         Control.Description = LanguageEUtil.AddTranslation("Smooth Nudge");
-        Controls.Add(Control);
+        Control.Input = InputRegistrar.EventStore.SmoothNudge;
+        Instructions.Add(Control);
 
-        Control = new();
-        Control.Description = LanguageEUtil.AddTranslation("Snap To Floor");
-        Controls.Add(Control);
+        Tutorial.Instructions = Instructions.ToIl2CppArray();
 
         return Tutorial;
     }
