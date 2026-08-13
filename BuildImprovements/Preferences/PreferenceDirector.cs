@@ -199,7 +199,7 @@ public static class PreferenceDirector
             identifier: "AllowAdvancedMovement",
             default_value: true,
             display_name: "Allow Advanced Placement Movement",
-            description: "Whether to enable the advanced movement keybinds. (locking a placement into place, nudging a placement, snapping a placement to the floor)"
+            description: "Whether to enable the advanced movement keybinds. (locking a placement into place, nudging a placement)"
             );
 
         SettingPreferences.CreateEntry(
@@ -240,57 +240,50 @@ public static class PreferenceDirector
         KeybindPreferences.CreateEntry(
             identifier: "LockPlacementBind",
             default_value: KeyCode.H,
-            display_name: "(Keybind) Lock Placement in Place",
-            description: "Keybind for locking a placement in place."
+            display_name: "(Keybind) Lock Placement in Place"
             );
 
         KeybindPreferences.CreateEntry(
             identifier: "NudgeUpBind",
             default_value: KeyCode.PageUp,
-            display_name: "(Keybind) Nudge Placement Upwards",
-            description: "Keybind for nudging a placement upwards while it is locked in place."
+            display_name: "(Keybind) Nudge Placement Upwards"
             );
 
         KeybindPreferences.CreateEntry(
             identifier: "NudgeDownBind",
             default_value: KeyCode.PageDown,
-            display_name: "(Keybind) Nudge Placement Downwards",
-            description: "Keybind for nudging a placement downwards while it is locked in place."
+            display_name: "(Keybind) Nudge Placement Downwards"
             );
 
         KeybindPreferences.CreateEntry(
             identifier: "NudgeForwardBind",
             default_value: KeyCode.UpArrow,
-            display_name: "(Keybind) Nudge Placement Forwards",
-            description: "Keybind for nudging a placement forwards (from the player's perspective) while it is locked in place."
+            display_name: "(Keybind) Nudge Placement Forwards"
             );
 
         KeybindPreferences.CreateEntry(
             identifier: "NudgeLeftBind",
             default_value: KeyCode.LeftArrow,
-            display_name: "(Keybind) Nudge Placement Left",
-            description: "Keybind for nudging a placement left (from the player's perspective) while it is locked in place."
+            display_name: "(Keybind) Nudge Placement Left"
             );
 
         KeybindPreferences.CreateEntry(
             identifier: "NudgeRightBind",
             default_value: KeyCode.RightArrow,
-            display_name: "(Keybind) Nudge Placement Right",
-            description: "Keybind for nudging a placement right (from the player's perspective) while it is locked in place."
+            display_name: "(Keybind) Nudge Placement Right"
             );
 
         KeybindPreferences.CreateEntry(
             identifier: "NudgeBackwardBind",
             default_value: KeyCode.DownArrow,
-            display_name: "(Keybind) Nudge Placement Backwards",
-            description: "Keybind for nudging a placement backwards (from the player's perspective) while it is locked in place."
+            display_name: "(Keybind) Nudge Placement Backwards"
             );
 
         KeybindPreferences.CreateEntry(
             identifier: "SmoothNudgeBind",
             default_value: KeyCode.LeftAlt,
             display_name: "(Keybind) Smooth Nudge",
-            description: "The keybind that must be held for smooth nudging.");
+            description: "The keybind that must be <b>held</b> for smooth nudging.");
 
         KeybindPreferences.CreateEntry(
             identifier: "GadgetEyedropperMiddleClick",
@@ -302,8 +295,7 @@ public static class PreferenceDirector
         KeybindPreferences.CreateEntry(
             identifier: "GadgetEyedropperBind",
             default_value: KeyCode.I,
-            display_name: "(Keybind) Gadget Eyedropper",
-            description: "Keybind for copying a gadget from the world to start building it."
+            display_name: "(Keybind) Gadget Eyedropper"
             );
 
         SubscribeToConfigChanges(KeybindPreferences,
