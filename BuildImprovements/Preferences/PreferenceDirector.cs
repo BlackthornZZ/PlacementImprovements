@@ -112,11 +112,6 @@ public static class PreferenceDirector
         get => KeybindPreferences.GetEntry<KeyCode>("SmoothNudgeBind").Value;
         private set => SetConfigValue<KeyCode>(KeybindPreferences, "SmoothNudgeBind", value);
     }
-    internal static KeyCode ResetPlacementBind
-    {
-        get => KeybindPreferences.GetEntry<KeyCode>("ResetBind").Value;
-        private set => SetConfigValue<KeyCode>(KeybindPreferences, "ResetBind", value);
-    }
     internal static bool bGadgetEyedropperMiddleClick
     {
         get => KeybindPreferences.GetEntry<bool>("GadgetEyedropperMiddleClick").Value;
@@ -294,13 +289,6 @@ public static class PreferenceDirector
             default_value: KeyCode.LeftAlt,
             display_name: "(Keybind) Smooth Nudge",
             description: "The keybind that must be held for smooth nudging.");
-
-        KeybindPreferences.CreateEntry(
-            identifier: "ResetBind",
-            default_value: KeyCode.Delete,
-            display_name: "(Keybind) Reset Placement",
-            description: "Keybind for snapping a placement back to its original position after nudging it."
-            );
 
         KeybindPreferences.CreateEntry(
             identifier: "GadgetEyedropperMiddleClick",

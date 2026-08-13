@@ -67,11 +67,6 @@ internal static class PlacementInputDirector
         if (!bGadgetMode || !bPlacementLocked) return;
 
         DoNudge(GItem);
-
-        if(InputEUtil.OnKeyDown(PreferenceDirector.ResetPlacementBind))
-        {
-            SetPlacementLocked(GItem, false);
-        }
     }
     public static void OnGadgetCleared(GadgetItem GItem) => ResetLock(GItem, false);
 
@@ -119,7 +114,7 @@ internal static class PlacementInputDirector
 
         if (NudgeDelta.sqrMagnitude <= 0) return;
 
-        SceneContext.Instance.eventDirector.RaiseEvent(NudgeGameEventQueryComponent.OnNudgedEvent);
+        //SceneContext.Instance.eventDirector.RaiseEvent(NudgeGameEventQueryComponent.OnNudgedEvent);
 
         if((InitialLockedPlacementPosition - (LockedPlacementPosition + NudgeDelta)).sqrMagnitude >= 100)
         {
