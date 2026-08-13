@@ -27,7 +27,7 @@ internal static class InputRegistrar
         internal InputEvent SmoothNudge;
         internal InputEvent GadgetEyedrop;
         internal InputEvent NudgeUp, NudgeDown;
-        internal InputEvent NudgeForward, NudgeBack, NudgeLeft, NudgeRight;
+        internal InputEvent NudgeForwardBack, NudgeLeftRight;
     };
 
     internal static InputEventStore EventStore = new();
@@ -43,10 +43,8 @@ internal static class InputRegistrar
         EventStore.SmoothNudge = RegisterInputForKey(KeyCodeToKey(PreferenceDirector.SmoothNudgeBind), "Smooth Nudge");
         EventStore.NudgeUp = RegisterInputForKey(KeyCodeToKey(PreferenceDirector.NudgeUpBind), "Nudge Up");
         EventStore.NudgeDown = RegisterInputForKey(KeyCodeToKey(PreferenceDirector.NudgeDownBind), "Nudge Down");
-        EventStore.NudgeForward = RegisterInputForKey(KeyCodeToKey(PreferenceDirector.NudgeForwardBind), "Nudge Forward");
-        EventStore.NudgeBack = RegisterInputForKey(KeyCodeToKey(PreferenceDirector.NudgeBackwardBind), "Nudge Back");
-        EventStore.NudgeLeft = RegisterInputForKey(KeyCodeToKey(PreferenceDirector.NudgeLeftBind), "Nudge Left");
-        EventStore.NudgeRight = RegisterInputForKey(KeyCodeToKey(PreferenceDirector.NudgeRightBind), "Nudge Right");
+        EventStore.NudgeForwardBack = RegisterInputForKeys(new[] { KeyCodeToKey(PreferenceDirector.NudgeForwardBind), KeyCodeToKey(PreferenceDirector.NudgeBackwardBind) }, "Nudge Forward/Back");
+        EventStore.NudgeLeftRight = RegisterInputForKeys(new[] { KeyCodeToKey(PreferenceDirector.NudgeLeftBind), KeyCodeToKey(PreferenceDirector.NudgeRightBind) } , "Nudge Left/Right");
     }
 
     // Encapsulates everything necessary to set up a callback for Key. Only possible while the InputDirector._mainGame.Map.Asset is disabled.
