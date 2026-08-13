@@ -8,6 +8,7 @@ using Il2CppMonomiPark.SlimeRancher.Event.Query;
 using Il2CppMonomiPark.SlimeRancher.Input;
 using Il2CppMonomiPark.SlimeRancher.Player.PlayerItems;
 using Il2CppMonomiPark.SlimeRancher.Tutorial;
+using Il2CppMonomiPark.SlimeRancher.UI;
 using Il2CppMonomiPark.SlimeRancher.UI.Framework.CommonControls;
 using Il2CppMonomiPark.SlimeRancher.UI.Gadget;
 using Il2CppMonomiPark.SlimeRancher.UI.Popup;
@@ -28,6 +29,8 @@ internal static class AdditiveUIDirector
     internal static TutorialDefinition? _AdvancedMovementTutorial = null;
     internal static InputLegendConfiguration? GadgetLockedInputLegend = null;
     internal static bool bInputLegendsModified = false;
+    internal static LocalizedString CopyGadgetLabel = LanguageEUtil.AddTranslation("Copy");
+    internal static LocalizedString NudgeLabel = LanguageEUtil.AddTranslation("Nudge");
     public static TutorialDefinition AdvancedMovementTutorial 
     { 
         get
@@ -38,6 +41,12 @@ internal static class AdditiveUIDirector
         }
     }
 
+    public static void ModifyTargetingUI(TargetingUI UI)
+    {
+        UI._gadgetModeInput = InputRegistrar.EventStore.GadgetEyedrop;
+        UI._gadgetStrings.GadgetModeInputHint = CopyGadgetLabel;
+        UI.Update();
+    }
     internal static TutorialDefinition MakeAdvancedMovementTutorial()
     {
         TutorialDefinition Tutorial = new TutorialDefinition
@@ -84,21 +93,17 @@ internal static class AdditiveUIDirector
 
         return Tutorial;
     }
-
     public static void PlayAdvancedMovementTutorial()
     {
         TutorialDirector Director = SceneContext.Instance.TutorialDirector;
         Director._currPopup = TutorialPopupUI.CreateTutorialPopup(AdvancedMovementTutorial).SRGetComponent<TutorialPopupUI>();
         Director._currPopup.CloseAfter(AdvancedMovementTutorial.CompletionUITime, true, true);
     }
-
     public static void ModifyBottomInputLegendUI(InputLegend BottomInputLegend)
     {
         if (bInputLegendsModified) return;
 
         GadgetItemMetadata GadgetItemData = SceneContext.Instance.player.GetComponent<PlayerItemController>().GadgetItem.GadgetItemMetadata;
-        LocalizedString CopyGadgetLabel = LanguageEUtil.AddTranslation("Copy");
-        LocalizedString NudgeLabel = LanguageEUtil.AddTranslation("Nudge");
         GadgetInputLegendConfiguration GadgetInputLegendConfig = BottomInputLegend.gameObject.GetComponent<GadgetInputLegendUpdater>()._inputLegendConfiguration;
 
         GadgetLockedInputLegend = UnityEngine.Object.Instantiate(GadgetInputLegendConfig.GadgetSelectedInputLegend);
