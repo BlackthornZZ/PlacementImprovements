@@ -1,20 +1,21 @@
 ﻿
+using BuildImprovements.Input;
+using Il2Cpp;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppMonomiPark.SlimeRancher.Input;
-using Il2CppMonomiPark.SlimeRancher.UI.Framework.CommonControls;
-using Starlight.Utils;
-using UnityEngine;
-using MelonLoader;
-using UnityEngine.Localization;
-using Il2CppSystem.Dynamic.Utils;
-using UnityEngine.InputSystem;
-using Il2Cpp;
-using Il2CppSystem.Linq;
-using Il2CppMonomiPark.SlimeRancher.UI.Gadget;
+using Il2CppMonomiPark.SlimeRancher.Player.PlayerItems;
 using Il2CppMonomiPark.SlimeRancher.Tutorial;
+using Il2CppMonomiPark.SlimeRancher.UI.Framework.CommonControls;
+using Il2CppMonomiPark.SlimeRancher.UI.Gadget;
 using Il2CppMonomiPark.SlimeRancher.UI.Popup;
 using Il2CppMonomiPark.SlimeRancher.Util.Extensions;
-using BuildImprovements.Input;
+using Il2CppSystem.Dynamic.Utils;
+using Il2CppSystem.Linq;
+using MelonLoader;
+using Starlight.Utils;
+using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.Localization;
 
 namespace BuildImprovements.UI;
 
@@ -22,6 +23,7 @@ namespace BuildImprovements.UI;
 internal static class AdditiveUIDirector
 {
     internal static TutorialDefinition? _AdvancedMovementTutorial = null;
+    internal static InputLegendConfiguration? GadgetLockedInputLegend = null;
     internal static bool bInputLegendsModified = false;
     public static TutorialDefinition AdvancedMovementTutorial 
     { 
@@ -80,26 +82,90 @@ internal static class AdditiveUIDirector
     {
         if (bInputLegendsModified) return;
 
+        GadgetItemMetadata GadgetItemData = SceneContext.Instance.player.GetComponent<PlayerItemController>().GadgetItem.GadgetItemMetadata;
+        LocalizedString CopyGadgetLabel = LanguageEUtil.AddTranslation("Copy");
+        LocalizedString NudgeLabel = LanguageEUtil.AddTranslation("Nudge");
         GadgetInputLegendConfiguration GadgetInputLegendConfig = BottomInputLegend.gameObject.GetComponent<GadgetInputLegendUpdater>()._inputLegendConfiguration;
 
-        AddNewKeybindToInputLegend(BottomInputLegend, GadgetInputLegendConfig.GadgetSelectedInputLegend, "Lock Gadget", InputRegistrar.EventStore.GadgetLock);
-        AddNewKeybindToInputLegend(BottomInputLegend, GadgetInputLegendConfig.GadgetTargetedInputLegend, "Copy Gadget", InputRegistrar.EventStore.GadgetEyedrop);
+        GadgetLockedInputLegend = UnityEngine.Object.Instantiate(GadgetInputLegendConfig.GadgetSelectedInputLegend);
+
+        ChangeInputHintLabel(GadgetLockedInputLegend, GadgetItemData.StoreGadget, "Unlock");
+        // "Gadget Inventory" input event. Couldn't find where it was stored but this works fine.
+        RemoveInputHint(GadgetLockedInputLegend, GadgetInputLegendConfig.NoSelectionOrTargetInputLegend._hints.First().InputEvent);
+        AddNewKeybindToInputLegend(GadgetLockedInputLegend, "Smooth", InputRegistrar.EventStore.SmoothNudge);
+        AddNewKeybindToInputLegend(GadgetLockedInputLegend, NudgeLabel, InputRegistrar.EventStore.NudgeUpDown);
+        AddNewKeybindToInputLegend(GadgetLockedInputLegend, NudgeLabel, InputRegistrar.EventStore.NudgeForwardBack, InputRegistrar.EventStore.NudgeLeftRight);
+
+        AddNewKeybindToInputLegend(GadgetInputLegendConfig.GadgetSelectedInputLegend, "Lock", InputRegistrar.EventStore.GadgetLock);
+        InsertKeybindAfter(GadgetInputLegendConfig.GadgetSelectedInputLegend, GadgetItemData.PlaceGadget, CopyGadgetLabel, InputRegistrar.EventStore.GadgetEyedrop);
+        InsertKeybindAfter(GadgetInputLegendConfig.GadgetTargetedInputLegend, GadgetItemData.PlaceGadget, CopyGadgetLabel, InputRegistrar.EventStore.GadgetEyedrop);
+
+        BottomInputLegend.Configure(GadgetInputLegendConfig.GadgetSelectedInputLegend);
+        BottomInputLegend.InvalidateDisplay();
 
         bInputLegendsModified = true;
     }
-    public static void AddNewKeybindToInputLegend(InputLegend Legend, InputLegendConfiguration LegendConfig, string Descriptor, InputEvent Event, bool DoublePress = false)
+    public static void AddNewKeybindToInputLegend(InputLegendConfiguration LegendConfig, string Descriptor, InputEvent Event, InputEvent? AdditionalInputEvent = null) => 
+        AddNewKeybindToInputLegend(LegendConfig,LanguageEUtil.AddTranslation(Descriptor), Event, AdditionalInputEvent);
+    public static void AddNewKeybindToInputLegend(InputLegendConfiguration LegendConfig, LocalizedString Label, InputEvent Event, InputEvent? AdditionalInputEvent = null)
     {
-        LocalizedString Label = LanguageEUtil.AddTranslation(Descriptor);
-
         InputHintConfiguration config = new()
         {
             InputEvent = Event,
+            AdditionalInputEvent = AdditionalInputEvent,
             Label = Label
         };
 
         List<InputHintConfiguration> Hints = LegendConfig._hints.ToNetList();
         Hints.Add(config);
         LegendConfig._hints = Hints.ToIl2CppArray();
-        Legend.SetInputHints(InteropStatics.ReinterpretCast<Il2CppSystem.Collections.Generic.List<InputHintConfiguration>, Il2CppSystem.Collections.Generic.IEnumerable<InputHintConfiguration>>(Hints.ToIl2CppList()));
+    }
+    public static void InsertKeybindAfter(InputLegendConfiguration LegendConfig, InputEvent After, LocalizedString Label, InputEvent Event, InputEvent? AdditionalInputEvent = null)
+    {
+        InputHintConfiguration? AfterHint = LegendConfig._hints.FirstOrDefault(hint => hint.InputEvent == After || hint.AdditionalInputEvent == After);
+        if(AfterHint == null)
+        {
+            MelonLogger.Warning("InsertKeybindAfter was called, but the After event wasn't present in the passed configuration!");
+            return;
+        }
+
+        int AfterIndex = LegendConfig._hints.IndexOf(AfterHint);
+
+        InputHintConfiguration config = new()
+        {
+            InputEvent = Event,
+            AdditionalInputEvent = AdditionalInputEvent,
+            Label = Label
+        };
+
+        List<InputHintConfiguration> Hints = LegendConfig._hints.ToNetList();
+        Hints.Insert(AfterIndex + 1, config);
+        LegendConfig._hints = Hints.ToIl2CppArray();
+    }
+    public static LocalizedString? ChangeInputHintLabel(InputLegendConfiguration Config, InputEvent TargetEvent, string NewDescriptor) => 
+        ChangeInputHintLabel(Config, TargetEvent, LanguageEUtil.AddTranslation(NewDescriptor));
+    public static LocalizedString? ChangeInputHintLabel(InputLegendConfiguration Config, InputEvent TargetEvent, LocalizedString NewLabel)
+    {
+        InputHintConfiguration? HintConfig = Config._hints.FirstOrDefault(hint => hint.InputEvent == TargetEvent || hint.AdditionalInputEvent == TargetEvent);
+        if (HintConfig == null)
+        {
+            MelonLogger.Warning("ChangeInputHintLabel was called but the specified InputEvent couldnt be found!");
+            return null;
+        }
+        LocalizedString OldLabel = HintConfig.Label;
+        HintConfig.Label = NewLabel;
+
+        return OldLabel;
+    }
+    public static void RemoveInputHint(InputLegendConfiguration Config, InputEvent TargetEvent)
+    {
+        InputHintConfiguration? HintConfig = Config._hints.FirstOrDefault(hint => hint.InputEvent == TargetEvent || hint.AdditionalInputEvent == TargetEvent);
+        if (HintConfig == null)
+        {
+            MelonLogger.Warning("RemoveInputHint was called but the specified InputEvent couldnt be found!");
+            return;
+        }
+
+        Config._hints = Config._hints.RemoveAtToNew(Config._hints.IndexOf(HintConfig));
     }
 }
