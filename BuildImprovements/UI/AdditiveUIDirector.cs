@@ -64,9 +64,9 @@ internal class AdditiveUIDirector
             CompletionUITime = 20f,
             OverrideCompletionUITime = true,
 #if DEBUG
-            AllowReplay = true,
+            AllowReplay = true
 #else
-        Tutorial.AllowReplay = false;
+            AllowReplay = false
 #endif
         };
 
@@ -90,7 +90,7 @@ internal class AdditiveUIDirector
 
         Control = new()
         {
-            Description = LanguageEUtil.AddTranslation(PreferenceDirector.bInvertSmoothNudge ? "Grid" : "Smooth Nudge"),
+            Description = LanguageEUtil.AddTranslation(PreferenceDirector.bInvertSmoothNudge ? "Grid-based Nudge" : "Smooth Nudge"),
             Input = InputRegistrar.EventStore.SmoothNudge
         };
         Instructions.Add(Control);
