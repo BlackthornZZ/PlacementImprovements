@@ -13,8 +13,8 @@ internal static class BuildInfo
     
     // MelonVersion is shown by ML on startup
     // Version is shown by Starlight
-    internal const string MelonVersion = "1.0.0"; 
-    internal const string Version = "1.0.0"; // Auto-Dev_Do_not_remove
+    internal const string MelonVersion = "1.1.0"; 
+    internal const string Version = "1.1.0"; // Auto-Dev_Do_not_remove
     internal const string Discord = null!;
     internal const string SourceCode = "https://github.com/BlackthornZZ/PlacementImprovements";
     internal const string Nexus = "https://www.nexusmods.com/slimerancher2/mods/179";
