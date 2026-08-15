@@ -34,6 +34,9 @@ public class PatchHelper
         if (!InGadgetItem._gadgetPlaceholderInstance)
             return EGadgetValidity.GV_Valid;
 
+        if (Main.PlacementInputDirector.bPlacementLocked)
+            Main.PlacementInputDirector.SetLockedTransform(InGadgetItem);
+
         if (!InGadgetItem._isGrounded && !PreferenceDirector.bIgnorePlayerGroundedState)
             return EGadgetValidity.GV_Invalid;
 
