@@ -123,6 +123,8 @@ internal class AdditiveUIDirector
 
         InsertKeybindAfter(GadgetInputLegendConfig.GadgetSelectedInputLegend, GadgetItemData.PlaceGadget, CopyGadgetLabel, InputRegistrar.EventStore.GadgetEyedrop);
         InsertKeybindAfter(GadgetInputLegendConfig.GadgetTargetedInputLegend, GadgetItemData.PlaceGadget, CopyGadgetLabel, InputRegistrar.EventStore.GadgetEyedrop);
+        InsertKeybindAfter(GadgetInputLegendConfig.GadgetSelectedInputLegendWithVariants, GadgetItemData.PlaceGadget, CopyGadgetLabel, InputRegistrar.EventStore.GadgetEyedrop);
+        InsertKeybindAfter(GadgetInputLegendConfig.GadgetTargetedInputLegendWithVariants, GadgetItemData.PlaceGadget, CopyGadgetLabel, InputRegistrar.EventStore.GadgetEyedrop);
 
         BottomInputLegend.Configure(GadgetInputLegendConfig.GadgetSelectedInputLegend);
         BottomInputLegend.InvalidateDisplay();
