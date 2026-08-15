@@ -68,6 +68,7 @@ public sealed class Main : StarlightExpansionV01
         LoadTime = ExpansionLoadTime.Startup,
         UnloadTime = ExpansionUnloadTime.Never,
         MultiplayerRequirement = MultiplayerRequirement.ServerAndClient,
+        IconPath = "Assets/PlacementImprovementsSmallIcon.png"
     };
     /// <inheritdoc/>
     public override void OnLateInitialize()
