@@ -1,4 +1,4 @@
-﻿#define UNITYEXPLORER
+﻿//#define UNITYEXPLORER
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +35,7 @@ public static class TargetingUIPatch
     [HarmonyPostfix]
     public static void Start_Postfix(TargetingUI __instance)
     {
-        AdditiveUIDirector.ModifyTargetingUI(__instance);
+        Main.AdditiveUIDirector.ModifyTargetingUI(__instance);
     }
 #endif
 };
