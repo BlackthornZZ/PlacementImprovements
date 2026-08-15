@@ -24,14 +24,14 @@ using UnityEngine.Localization;
 namespace BuildImprovements.UI;
 
 // Handler class for everything to do with UI in placement improvements.
-internal static class AdditiveUIDirector
+internal class AdditiveUIDirector
 {
-    internal static TutorialDefinition? _AdvancedMovementTutorial = null;
-    internal static InputLegendConfiguration? GadgetLockedInputLegend = null;
-    internal static bool bInputLegendsModified = false;
-    internal static LocalizedString CopyGadgetLabel = LanguageEUtil.AddTranslation("Copy");
-    internal static LocalizedString NudgeLabel = LanguageEUtil.AddTranslation("Nudge");
-    public static TutorialDefinition AdvancedMovementTutorial 
+    internal TutorialDefinition? _AdvancedMovementTutorial = null;
+    internal InputLegendConfiguration? GadgetLockedInputLegend = null;
+    internal bool bInputLegendsModified = false;
+    internal LocalizedString CopyGadgetLabel = LanguageEUtil.AddTranslation("Copy");
+    internal LocalizedString NudgeLabel = LanguageEUtil.AddTranslation("Nudge");
+    public TutorialDefinition AdvancedMovementTutorial 
     { 
         get
         {
@@ -41,13 +41,13 @@ internal static class AdditiveUIDirector
         }
     }
 
-    public static void ModifyTargetingUI(TargetingUI UI)
+    public void ModifyTargetingUI(TargetingUI UI)
     {
         UI._gadgetModeInput = InputRegistrar.EventStore.GadgetEyedrop;
         UI._gadgetStrings.GadgetModeInputHint = CopyGadgetLabel;
         UI.Update();
     }
-    internal static TutorialDefinition MakeAdvancedMovementTutorial()
+    internal TutorialDefinition MakeAdvancedMovementTutorial()
     {
         TutorialDefinition Tutorial = new TutorialDefinition
         {
@@ -93,13 +93,13 @@ internal static class AdditiveUIDirector
 
         return Tutorial;
     }
-    public static void PlayAdvancedMovementTutorial()
+    public void PlayAdvancedMovementTutorial()
     {
         TutorialDirector Director = SceneContext.Instance.TutorialDirector;
         Director._currPopup = TutorialPopupUI.CreateTutorialPopup(AdvancedMovementTutorial).SRGetComponent<TutorialPopupUI>();
         Director._currPopup.CloseAfter(AdvancedMovementTutorial.CompletionUITime, true, true);
     }
-    public static void ModifyBottomInputLegendUI(InputLegend BottomInputLegend)
+    public void ModifyBottomInputLegendUI(InputLegend BottomInputLegend)
     {
         if (bInputLegendsModified) return;
 

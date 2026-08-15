@@ -22,21 +22,21 @@ using UnityEngine.InputSystem;
 using UnityEngine.Localization;
 
 namespace BuildImprovements.Input;
-internal static class PlacementInputDirector
+public class PlacementInputDirector
 {
     internal static readonly LocalizedString MaxNudgeString = LanguageEUtil.AddTranslation("Max Nudge Distance Reached");
     internal static readonly LocalizedString EyedropperNoneAvailableString = LanguageEUtil.AddTranslation("None In Storage");
     internal static readonly LocalizedString EyedropperNoTarget = LanguageEUtil.AddTranslation("Not a Gadget");
-    internal static float LastNudgeWarning = 0f;
+    internal float LastNudgeWarning = 0f;
     internal const float NudgeWarningInterval = 1f;
 
-    internal static Vector3 LockedPlacementPosition = Vector3.zero;
-    internal static Vector3 InitialLockedPlacementPosition = Vector3.zero;
-    internal static Quaternion LockedPlacementRotation = Quaternion.identity;
-    internal static bool bPlacementLocked = false;
-    public static void OnGadgetSelected(GadgetItem GItem) => ResetLock(GItem, false);
-    public static void OnInputDirectorUpdate(GadgetItem GItem) => CheckInputs(GItem, SceneContext.Instance.PlayerState.GadgetModeActive);
-    public static void OnPostGadgetItemFootprintUpdate(GadgetItem GItem) 
+    internal Vector3 LockedPlacementPosition = Vector3.zero;
+    internal Vector3 InitialLockedPlacementPosition = Vector3.zero;
+    internal Quaternion LockedPlacementRotation = Quaternion.identity;
+    internal bool bPlacementLocked = false;
+    public void OnGadgetSelected(GadgetItem GItem) => ResetLock(GItem, false);
+    public void OnInputDirectorUpdate(GadgetItem GItem) => CheckInputs(GItem, SceneContext.Instance.PlayerState.GadgetModeActive);
+    public void OnPostGadgetItemFootprintUpdate(GadgetItem GItem) 
     {
         // This should not happen!!!
         if ((!GItem._gadgetFootprintInstance || !GItem._gadgetPlaceholderInstance) && bPlacementLocked)
@@ -55,21 +55,21 @@ internal static class PlacementInputDirector
         }
     }
 
-    public static void SetLockedTransform(GadgetItem GItem)
+    public void SetLockedTransform(GadgetItem GItem)
     {
         GItem._gadgetFootprintInstance.transform.SetPositionAndRotation(LockedPlacementPosition, LockedPlacementRotation);
         GItem._gadgetPlaceholderInstance.transform.SetPositionAndRotation(LockedPlacementPosition, LockedPlacementRotation);
     }
 
-    public static void CheckInputs(GadgetItem GItem, bool bGadgetMode)
+    public void CheckInputs(GadgetItem GItem, bool bGadgetMode)
     {
         if (!bGadgetMode || !bPlacementLocked) return;
 
         DoNudge(GItem);
     }
-    public static void OnGadgetCleared(GadgetItem GItem) => ResetLock(GItem, false);
+    public void OnGadgetCleared(GadgetItem GItem) => ResetLock(GItem, false);
 
-    public static void ResetLock(GadgetItem GItem, bool bPreservePlacementRotation = false)
+    public void ResetLock(GadgetItem GItem, bool bPreservePlacementRotation = false)
     {
         bPlacementLocked = false;
         if (bPreservePlacementRotation && GItem._gadgetPlaceholderInstance && GItem._gadgetFootprintInstance)
@@ -86,7 +86,7 @@ internal static class PlacementInputDirector
      
     }
 
-    public static void DoNudge(GadgetItem GItem)
+    public void DoNudge(GadgetItem GItem)
     {
         Vector3 NudgeDelta = Vector3.zero;
         float NudgeDeltaMultiplier = PreferenceDirector.bSmoothNudge ? PreferenceDirector.NudgeSpeed * Time.deltaTime : PreferenceDirector.NudgeIncrementScale;
@@ -131,7 +131,7 @@ internal static class PlacementInputDirector
         LockedPlacementPosition += NudgeDelta;
     }
 
-    public static void DoGadgetEyedropper(GadgetItem GItem)
+    public void DoGadgetEyedropper(GadgetItem GItem)
     {
         if (GItem._player.GadgetModeActive.Value ? !GItem._gadgetDirector.TargetedGadget.Value : (TargetingUI.Instance.GetTargetObject() == null || !TargetingUI.Instance.GetGadgetTargetInfo(TargetingUI.Instance.GetTargetObject())))
         {
@@ -161,7 +161,7 @@ internal static class PlacementInputDirector
 
     }
     internal static bool CheckNudgeKey(KeyCode inKey) => PreferenceDirector.bSmoothNudge ? InputEUtil.OnKey(inKey) : InputEUtil.OnKeyDown(inKey);
-    public static void SetPlacementLocked(GadgetItem GItem, bool bNewPlacementLocked)
+    public void SetPlacementLocked(GadgetItem GItem, bool bNewPlacementLocked)
     {
         // Can't set placement locked if there's no instance to lock!
         if(!GItem._gadgetPlaceholderInstance)
@@ -177,7 +177,7 @@ internal static class PlacementInputDirector
             LockedPlacementRotation = GItem._gadgetPlaceholderInstance.transform.rotation;
 
             if(SceneContext.Instance.TutorialDirector._currPopup == null)
-                AdditiveUIDirector.PlayAdvancedMovementTutorial();
+                Main.AdditiveUIDirector.PlayAdvancedMovementTutorial();
         }
         else ResetLock(GItem, true);
     }
@@ -190,7 +190,7 @@ internal static class PlacementInputDirector
         GadgetItem GItem = SceneContext.Instance.player.GetComponent<PlayerItemController>().GadgetItem;
 
         if (GItem._isFootprintVisible && GItem._gadgetDirector.SelectedSlottedGadget != null)
-            SetPlacementLocked(GItem, !bPlacementLocked);
+            Main.PlacementInputDirector.SetPlacementLocked(GItem, !Main.PlacementInputDirector.bPlacementLocked);
     }
-    public static void GadgetEyedropper_Performed(InputEventData Data) => DoGadgetEyedropper(SceneContext.Instance.player.GetComponent<PlayerItemController>().GadgetItem);
+    public static void GadgetEyedropper_Performed(InputEventData Data) => Main.PlacementInputDirector.DoGadgetEyedropper(SceneContext.Instance.player.GetComponent<PlayerItemController>().GadgetItem);
 }

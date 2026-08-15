@@ -13,16 +13,16 @@ public enum EGadgetValidity
 };
 
 // Contains static functions for storing and handling things at a larger scope than just per-patch.
-public static class PatchHelper
+public class PatchHelper
 {
     // Updated with every GadgetItem::IsPlacementValid call.
-    internal static bool bTransient_SlopeIsLegal;
+    internal bool bTransient_SlopeIsLegal;
     // Backwards compatibility with SR2MP / Ranching Together.
     // SR2MP expects a field with type EGadgetValidity (BindingFlags: Static | Public | NonPublic) and name CurrentValidity.
     // (which is something that existed but is now replaced by a function call)
     // It then uses this field to get the current validity value according to this mod.
-    public static EGadgetValidity CurrentValidity { get => GetCurrentValidity(); }
-    public static EGadgetValidity GetCurrentValidity(GadgetItem InGadgetItem = null!)
+    public EGadgetValidity CurrentValidity { get => GetCurrentValidity(); }
+    public EGadgetValidity GetCurrentValidity(GadgetItem InGadgetItem = null!)
     {
         if(!InGadgetItem)
             InGadgetItem = SceneContext.Instance.player.GetComponent<PlayerItemController>().GadgetItem;
@@ -59,7 +59,7 @@ public static class PatchHelper
         return EGadgetValidity.GV_Valid;
     }
     
-    public static bool IsSlopeLegal(Vector3 Normal, float MaxValidSlope)
+    public bool IsSlopeLegal(Vector3 Normal, float MaxValidSlope)
     {
         float Slope = Normal.y;
         // Check for verticality
@@ -76,7 +76,7 @@ public static class PatchHelper
         return true;
     }
 
-    public static void SetGadgetVisuals(EGadgetValidity Validity, GadgetItem InGadgetItem = null!, GadgetsOverlayModeCustomPass Pass = null!)
+    public void SetGadgetVisuals(EGadgetValidity Validity, GadgetItem InGadgetItem = null!, GadgetsOverlayModeCustomPass Pass = null!)
     {
         if (!InGadgetItem)
             InGadgetItem = SceneContext.Instance.player.GetComponent<PlayerItemController>().GadgetItem;
@@ -97,7 +97,7 @@ public static class PatchHelper
         }
     }
 
-    public static void SetGadgetPlacementColor(Color InRGB, GadgetItem InGadgetItem = null!, GadgetsOverlayModeCustomPass GadgetOverlayPass = null!, bool bUseInvalidColor = false)
+    public void SetGadgetPlacementColor(Color InRGB, GadgetItem InGadgetItem = null!, GadgetsOverlayModeCustomPass GadgetOverlayPass = null!, bool bUseInvalidColor = false)
     {
         if (!InGadgetItem)
             InGadgetItem = SceneContext.Instance.player.GetComponent<PlayerItemController>().GadgetItem;

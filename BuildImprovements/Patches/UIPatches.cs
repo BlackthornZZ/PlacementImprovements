@@ -19,9 +19,9 @@ public static class GadgetInputLegendPatches
     [HarmonyPostfix]
     public static void UpdateInputLegend_Postfix(GadgetInputLegendUpdater __instance)
     {
-        if(PlacementInputDirector.bPlacementLocked && __instance._inputLegend == HudUI.Instance.BottomInputLegend)
+        if(Main.PlacementInputDirector.bPlacementLocked && __instance._inputLegend == HudUI.Instance.BottomInputLegend)
         {
-            __instance._inputLegend.Configure(AdditiveUIDirector.GadgetLockedInputLegend);
+            __instance._inputLegend.Configure(Main.AdditiveUIDirector.GadgetLockedInputLegend);
         }
     }
 }

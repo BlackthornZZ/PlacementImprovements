@@ -338,11 +338,11 @@ public static class PreferenceDirector
     // ==========
     private static void ValidColorChanged(object OldValue, object NewValue)
     {
-        PatchHelper.SetGadgetPlacementColor(ValidColor);
+        Main.PatchHelper.SetGadgetPlacementColor(ValidColor);
     }
     private static void InvalidColorChanged(object OldValue, object NewValue)
     {
-        PatchHelper.SetGadgetPlacementColor(InvalidColor, bUseInvalidColor: true);
+        Main.PatchHelper.SetGadgetPlacementColor(InvalidColor, bUseInvalidColor: true);
     }
     private static void AnyKeybindChanged(object OldValue, object NewValue)
     {
