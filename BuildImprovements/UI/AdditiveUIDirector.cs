@@ -29,8 +29,9 @@ internal class AdditiveUIDirector
     internal TutorialDefinition? _AdvancedMovementTutorial = null;
     internal InputLegendConfiguration? GadgetLockedInputLegend = null;
     internal bool bInputLegendsModified = false;
-    internal LocalizedString CopyGadgetLabel = LanguageEUtil.AddTranslation("Copy");
-    internal LocalizedString NudgeLabel = LanguageEUtil.AddTranslation("Nudge");
+    internal static readonly LocalizedString CopyGadgetLabel = LanguageEUtil.AddTranslation("Copy");
+    internal static readonly LocalizedString NudgeLabel = LanguageEUtil.AddTranslation("Nudge");
+
     public TutorialDefinition AdvancedMovementTutorial 
     { 
         get
