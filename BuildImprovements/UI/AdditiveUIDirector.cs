@@ -33,6 +33,9 @@ internal class AdditiveUIDirector
     internal static readonly LocalizedString CopyGadgetLabel = LanguageEUtil.AddTranslation("Copy");
     internal static readonly LocalizedString NudgeLabel = LanguageEUtil.AddTranslation("Nudge");
     internal static readonly LocalizedString GadgetLockLabel = LanguageEUtil.AddTranslation("Lock");
+    internal static readonly LocalizedString SmoothNudgeLabel = LanguageEUtil.AddTranslation("Smooth");
+    internal static readonly LocalizedString GridNudgeLabel = LanguageEUtil.AddTranslation("Grid");
+    internal static readonly LocalizedString UnlockLabel = LanguageEUtil.AddTranslation("Unlock");
 
     public TutorialDefinition AdvancedMovementTutorial 
     { 
@@ -87,7 +90,7 @@ internal class AdditiveUIDirector
 
         Control = new()
         {
-            Description = LanguageEUtil.AddTranslation("Smooth Nudge"),
+            Description = LanguageEUtil.AddTranslation(PreferenceDirector.bInvertSmoothNudge ? "Grid" : "Smooth Nudge"),
             Input = InputRegistrar.EventStore.SmoothNudge
         };
         Instructions.Add(Control);
@@ -111,10 +114,10 @@ internal class AdditiveUIDirector
 
         GadgetLockedInputLegend = UnityEngine.Object.Instantiate(GadgetInputLegendConfig.GadgetSelectedInputLegend);
 
-        ChangeInputHintLabel(GadgetLockedInputLegend, GadgetItemData.StoreGadget, "Unlock");
+        ChangeInputHintLabel(GadgetLockedInputLegend, GadgetItemData.StoreGadget, UnlockLabel);
         // "Gadget Inventory" input event. Couldn't find where it was stored but this works fine.
         RemoveInputHint(GadgetLockedInputLegend, GadgetInputLegendConfig.NoSelectionOrTargetInputLegend._hints.First().InputEvent);
-        AddNewKeybindToInputLegend(GadgetLockedInputLegend, "Smooth", InputRegistrar.EventStore.SmoothNudge);
+        AddNewKeybindToInputLegend(GadgetLockedInputLegend, PreferenceDirector.bInvertSmoothNudge ? GridNudgeLabel : SmoothNudgeLabel, InputRegistrar.EventStore.SmoothNudge);
         AddNewKeybindToInputLegend(GadgetLockedInputLegend, NudgeLabel, InputRegistrar.EventStore.NudgeUpDown);
         AddNewKeybindToInputLegend(GadgetLockedInputLegend, NudgeLabel, InputRegistrar.EventStore.NudgeForwardBack, InputRegistrar.EventStore.NudgeLeftRight);
 
@@ -148,6 +151,9 @@ internal class AdditiveUIDirector
             RemoveInputHint(GadgetInputLegendConfig.GadgetSelectedInputLegendWithVariants, InputRegistrar.EventStore.GadgetLock);
         }
     }
+
+    public void ChangeSmoothNudgeLabel(bool bInverted)
+        => ChangeInputHintLabel(GadgetLockedInputLegend!, InputRegistrar.EventStore.SmoothNudge, PreferenceDirector.bInvertSmoothNudge ? GridNudgeLabel : SmoothNudgeLabel);
     public static void AddNewKeybindToInputLegend(InputLegendConfiguration LegendConfig, string Descriptor, InputEvent Event, InputEvent? AdditionalInputEvent = null) => 
         AddNewKeybindToInputLegend(LegendConfig,LanguageEUtil.AddTranslation(Descriptor), Event, AdditionalInputEvent);
     public static void AddNewKeybindToInputLegend(InputLegendConfiguration LegendConfig, LocalizedString Label, InputEvent Event, InputEvent? AdditionalInputEvent = null)

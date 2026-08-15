@@ -246,9 +246,10 @@ public static class PreferenceDirector
             identifier: "InvertSmoothNudge",
             default_value: false,
             display_name: "Invert Smooth Nudge",
-            description: "When this is turned on, smooth nudging will be the default, while holding its key results in the incremental nudge being enabled.\nNOTE: Input display labels are unaffected by this change and will continue to display \"Smooth\".");
+            description: "When this is turned on, smooth nudging will be the default, while holding its key results in the incremental nudge being enabled.");
 
         SettingPreferences.GetEntry("AllowAdvancedMovement").OnEntryValueChangedUntyped.Subscribe(AdvancedMovementChanged);
+        SettingPreferences.GetEntry("InvertSmoothNudge").OnEntryValueChangedUntyped.Subscribe(InvertSmoothNudgeChanged);
 
         // == Keybindings ==
         // Client-side
@@ -355,9 +356,9 @@ public static class PreferenceDirector
     }
 
     private static void AdvancedMovementChanged(object OldValue, object NewValue)
-    {
-        Main.AdditiveUIDirector.ChangeGadgetLockInputHints((bool)NewValue);
-    }
+        => Main.AdditiveUIDirector.ChangeGadgetLockInputHints((bool)NewValue);
+    private static void InvertSmoothNudgeChanged(object OldValue, object NewValue)
+        => Main.AdditiveUIDirector.ChangeSmoothNudgeLabel((bool)NewValue);
 
     // Helpers
     // ==========
