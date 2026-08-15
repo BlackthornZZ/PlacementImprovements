@@ -152,8 +152,6 @@ internal static class InputRegistrar
             groups = group
         };
 
-        MelonLogger.Msg("InputBinding effective path: " + Binding.effectivePath);
-
         return Binding;
     }
     public static InputAction MakeInputAction(string Name, InputBinding Binding, InputActionType ActionType = InputActionType.Button) => MakeInputAction(Name, new[] {Binding}, ActionType);
