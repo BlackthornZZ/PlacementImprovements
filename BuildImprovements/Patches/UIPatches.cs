@@ -1,4 +1,5 @@
-﻿using System;
+﻿#define UNITYEXPLORER
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,11 +29,13 @@ public static class GadgetInputLegendPatches
 [HarmonyPatch(typeof(TargetingUI))]
 public static class TargetingUIPatch
 {
-    // Prefix because Postfix makes UnityExplorer crash the game again.
+#if UNITYEXPLORER
+#else
     [HarmonyPatch(nameof(TargetingUI.Start))]
     [HarmonyPostfix]
     public static void Start_Postfix(TargetingUI __instance)
     {
         AdditiveUIDirector.ModifyTargetingUI(__instance);
     }
+#endif
 };
