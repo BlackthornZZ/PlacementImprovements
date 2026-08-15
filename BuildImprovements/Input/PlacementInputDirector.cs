@@ -2,6 +2,7 @@
 using BuildImprovements.Preferences;
 using BuildImprovements.UI;
 using Il2Cpp;
+using Il2CppMonomiPark.SlimeRancher.Event;
 using Il2CppMonomiPark.SlimeRancher.Input;
 using Il2CppMonomiPark.SlimeRancher.Player;
 using Il2CppMonomiPark.SlimeRancher.Player.PlayerItems;
@@ -177,7 +178,7 @@ public class PlacementInputDirector
             LockedPlacementRotation = GItem._gadgetPlaceholderInstance.transform.rotation;
 
             if(SceneContext.Instance.TutorialDirector._currPopup == null)
-                Main.AdditiveUIDirector.PlayAdvancedMovementTutorial();
+                Main.AdditiveUIDirector.TryPlayAdvancedMovementTutorial();
         }
         else ResetLock(GItem, true);
     }

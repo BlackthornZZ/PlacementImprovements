@@ -37,6 +37,7 @@ internal class AdditiveUIDirector
     internal static readonly LocalizedString GridNudgeLabel = LanguageEUtil.AddTranslation("Grid");
     internal static readonly LocalizedString UnlockLabel = LanguageEUtil.AddTranslation("Unlock");
     internal static readonly List<Sprite> AdvancedMovementTutorialAnimFrames = new() { EmbeddedResourceEUtil.LoadSprite("Assets.LockClosed.png"), EmbeddedResourceEUtil.LoadSprite("Assets.LockOpen.png") };
+    internal StaticGameEvent AdvancedMovementTutorialPlayedEvent = null!;
     public TutorialDefinition AdvancedMovementTutorial 
     { 
         get
@@ -45,6 +46,12 @@ internal class AdditiveUIDirector
                 _AdvancedMovementTutorial = MakeAdvancedMovementTutorial();
             return _AdvancedMovementTutorial;
         }
+    }
+
+    internal AdditiveUIDirector()
+    {
+        AdvancedMovementTutorialPlayedEvent = StaticGameEvent.CreateStaticGameEvent("AdvancedMovementTutorialPlayed", "AdvancedMovementTutorialPlayedData");
+        AdvancedMovementTutorialPlayedEvent._eventDirector = SceneContext.Instance.eventDirector;
     }
 
     public void ModifyTargetingUI(TargetingUI UI)
@@ -100,11 +107,15 @@ internal class AdditiveUIDirector
 
         return Tutorial;
     }
-    public void PlayAdvancedMovementTutorial()
+    public void TryPlayAdvancedMovementTutorial()
     {
+        if (AdvancedMovementTutorialPlayedEvent._eventDirector.GetRecordEntryForEvent(AdvancedMovementTutorialPlayedEvent.Cast<IGameEvent>()) != null)
+            return;
+
         TutorialDirector Director = SceneContext.Instance.TutorialDirector;
         Director._currPopup = TutorialPopupUI.CreateTutorialPopup(AdvancedMovementTutorial).SRGetComponent<TutorialPopupUI>();
         Director._currPopup.CloseAfter(AdvancedMovementTutorial.CompletionUITime, true, true);
+        AdvancedMovementTutorialPlayedEvent.RaiseEvent();
     }
     public void ModifyBottomInputLegendUI(InputLegend BottomInputLegend)
     {
