@@ -36,7 +36,7 @@ internal class AdditiveUIDirector
     internal static readonly LocalizedString SmoothNudgeLabel = LanguageEUtil.AddTranslation("Smooth");
     internal static readonly LocalizedString GridNudgeLabel = LanguageEUtil.AddTranslation("Grid");
     internal static readonly LocalizedString UnlockLabel = LanguageEUtil.AddTranslation("Unlock");
-
+    internal static readonly List<Sprite> AdvancedMovementTutorialAnimFrames = new() { EmbeddedResourceEUtil.LoadSprite("Assets.LockClosed.png"), EmbeddedResourceEUtil.LoadSprite("Assets.LockOpen.png") };
     public TutorialDefinition AdvancedMovementTutorial 
     { 
         get
@@ -96,6 +96,7 @@ internal class AdditiveUIDirector
         Instructions.Add(Control);
 
         Tutorial.Instructions = Instructions.ToIl2CppArray();
+        Tutorial.AnimationFrames = AdvancedMovementTutorialAnimFrames.ToIl2CppArray();
 
         return Tutorial;
     }
