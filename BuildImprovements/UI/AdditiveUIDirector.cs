@@ -1,6 +1,7 @@
 ﻿
 using BuildImprovements.Injected;
 using BuildImprovements.Input;
+using BuildImprovements.Preferences;
 using Il2Cpp;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppMonomiPark.SlimeRancher.Event;
@@ -31,6 +32,7 @@ internal class AdditiveUIDirector
     internal bool bInputLegendsModified = false;
     internal static readonly LocalizedString CopyGadgetLabel = LanguageEUtil.AddTranslation("Copy");
     internal static readonly LocalizedString NudgeLabel = LanguageEUtil.AddTranslation("Nudge");
+    internal static readonly LocalizedString GadgetLockLabel = LanguageEUtil.AddTranslation("Lock");
 
     public TutorialDefinition AdvancedMovementTutorial 
     { 
@@ -116,7 +118,9 @@ internal class AdditiveUIDirector
         AddNewKeybindToInputLegend(GadgetLockedInputLegend, NudgeLabel, InputRegistrar.EventStore.NudgeUpDown);
         AddNewKeybindToInputLegend(GadgetLockedInputLegend, NudgeLabel, InputRegistrar.EventStore.NudgeForwardBack, InputRegistrar.EventStore.NudgeLeftRight);
 
-        AddNewKeybindToInputLegend(GadgetInputLegendConfig.GadgetSelectedInputLegend, "Lock", InputRegistrar.EventStore.GadgetLock);
+        if(PreferenceDirector.bAllowAdvancedMovement)
+            ChangeGadgetLockInputHints(true, GadgetInputLegendConfig);
+
         InsertKeybindAfter(GadgetInputLegendConfig.GadgetSelectedInputLegend, GadgetItemData.PlaceGadget, CopyGadgetLabel, InputRegistrar.EventStore.GadgetEyedrop);
         InsertKeybindAfter(GadgetInputLegendConfig.GadgetTargetedInputLegend, GadgetItemData.PlaceGadget, CopyGadgetLabel, InputRegistrar.EventStore.GadgetEyedrop);
 
@@ -124,6 +128,23 @@ internal class AdditiveUIDirector
         BottomInputLegend.InvalidateDisplay();
 
         bInputLegendsModified = true;
+    }
+
+    public void ChangeGadgetLockInputHints(bool bEnabled, GadgetInputLegendConfiguration? GadgetInputLegendConfig = null)
+    {
+        if (GadgetInputLegendConfig == null)
+            GadgetInputLegendConfig = HudUI.Instance.BottomInputLegend.gameObject.GetComponent<GadgetInputLegendUpdater>()._inputLegendConfiguration;
+
+        if(bEnabled)
+        {
+            AddNewKeybindToInputLegend(GadgetInputLegendConfig.GadgetSelectedInputLegend, GadgetLockLabel, InputRegistrar.EventStore.GadgetLock);
+            AddNewKeybindToInputLegend(GadgetInputLegendConfig.GadgetSelectedInputLegendWithVariants, GadgetLockLabel, InputRegistrar.EventStore.GadgetLock);
+        }
+        else if(bInputLegendsModified)
+        {
+            RemoveInputHint(GadgetInputLegendConfig.GadgetSelectedInputLegend, InputRegistrar.EventStore.GadgetLock);
+            RemoveInputHint(GadgetInputLegendConfig.GadgetSelectedInputLegendWithVariants, InputRegistrar.EventStore.GadgetLock);
+        }
     }
     public static void AddNewKeybindToInputLegend(InputLegendConfiguration LegendConfig, string Descriptor, InputEvent Event, InputEvent? AdditionalInputEvent = null) => 
         AddNewKeybindToInputLegend(LegendConfig,LanguageEUtil.AddTranslation(Descriptor), Event, AdditionalInputEvent);

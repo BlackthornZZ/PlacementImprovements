@@ -1,6 +1,8 @@
 ﻿using BuildImprovements.Input;
 using BuildImprovements.Patches;
+using BuildImprovements.UI;
 using Il2Cpp;
+using Il2CppMonomiPark.SlimeRancher.UI.Gadget;
 using MelonLoader;
 using MelonLoader.Preferences;
 using Starlight.Utils;
@@ -246,6 +248,7 @@ public static class PreferenceDirector
             display_name: "Invert Smooth Nudge",
             description: "When this is turned on, smooth nudging will be the default, while holding its key results in the incremental nudge being enabled.\nNOTE: Input display labels are unaffected by this change and will continue to display \"Smooth\".");
 
+        SettingPreferences.GetEntry("AllowAdvancedMovement").OnEntryValueChangedUntyped.Subscribe(AdvancedMovementChanged);
 
         // == Keybindings ==
         // Client-side
@@ -349,6 +352,11 @@ public static class PreferenceDirector
         GameContext.Instance.InputDirector._mainGame.Map.asset.Disable();
         InputRegistrar.ResetPlacementImprovementsInputs();
         GameContext.Instance.InputDirector._mainGame.Map.asset.Enable();
+    }
+
+    private static void AdvancedMovementChanged(object OldValue, object NewValue)
+    {
+        Main.AdditiveUIDirector.ChangeGadgetLockInputHints((bool)NewValue);
     }
 
     // Helpers
