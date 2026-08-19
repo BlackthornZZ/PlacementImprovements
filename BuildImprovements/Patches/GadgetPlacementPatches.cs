@@ -22,7 +22,7 @@ static class GadgetItemPatches
     private static void UpdateFootprint_Postfix(GadgetItem __instance)
     {
         if(PreferenceDirector.bAllowAdvancedMovement)
-            Main.PlacementInputDirector.OnPostGadgetItemFootprintUpdate(__instance);
+            Main.PlacementInputDirector.OnPostGadgetItemFootprintUpdate();
 
         Main.PatchHelper.SetGadgetVisuals(Main.PatchHelper.CurrentValidity, __instance);
 
@@ -40,7 +40,7 @@ static class GadgetItemPatches
     {
         if (PreferenceDirector.bAllowAdvancedMovement)
         {
-            Main.PlacementInputDirector.OnGadgetSelected(__instance);
+            Main.PlacementInputDirector.OnGadgetSelected();
         }
 
         Main.AdditiveUIDirector.ModifyBottomInputLegendUI(HudUI.Instance.BottomInputLegend);
@@ -50,7 +50,7 @@ static class GadgetItemPatches
     private static void IsPlacementValid_Postfix(GadgetItem __instance, Ray ray, RaycastHit hit, ref bool __result)
     {
         if (PreferenceDirector.bAllowAdvancedMovement && Main.PlacementInputDirector.bPlacementLocked)
-            Main.PlacementInputDirector.SetLockedTransform(__instance);
+            Main.PlacementInputDirector.SetLockedTransform();
 
         if (__instance.GadgetItemMetadata)
             Main.PatchHelper.bTransient_SlopeIsLegal = Main.PatchHelper.IsSlopeLegal(hit.normal, __instance.GadgetItemMetadata.MaxValidPlacementSlope);
@@ -62,21 +62,21 @@ static class GadgetItemPatches
 
     [HarmonyPostfix]
     [HarmonyPatch(nameof(GadgetItem.ClearHeldGadget))]
-    private static void ClearHeldGadget_Postfix(GadgetItem __instance)
+    private static void ClearHeldGadget_Postfix()
     {
         if (!PreferenceDirector.bAllowAdvancedMovement) return;
 
-        Main.PlacementInputDirector.OnGadgetCleared(__instance);
+        Main.PlacementInputDirector.OnGadgetCleared();
     }
 
     // When Placements are locked we want to unlock them instead of storing the gadget.
     [HarmonyPrefix]
     [HarmonyPatch(nameof(GadgetItem.StoreGadget))]
-    private static bool StoreGadget_Prefix(GadgetItem __instance)
+    private static bool StoreGadget_Prefix()
     {
         if(PreferenceDirector.bAllowAdvancedMovement && Main.PlacementInputDirector.bPlacementLocked)
         {
-            Main.PlacementInputDirector.SetPlacementLocked(__instance, false);
+            Main.PlacementInputDirector.SetPlacementLocked(false);
             return false;
         }
         return true;
@@ -118,8 +118,6 @@ static class InputDirectorPatches
         if (SceneContext.Instance == null || SceneContext.Instance.player == null) 
             return;
 
-        GadgetItem GItem = SceneContext.Instance.player.GetComponent<PlayerItemController>().GadgetItem;
-
-        Main.PlacementInputDirector.OnInputDirectorUpdate(SceneContext.Instance.player.GetComponent<PlayerItemController>().GadgetItem);
+        Main.PlacementInputDirector.OnInputDirectorUpdate();
     }
 };
