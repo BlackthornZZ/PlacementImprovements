@@ -1,7 +1,7 @@
 ﻿
 using BuildImprovements.Injected;
 using BuildImprovements.Input;
-using BuildImprovements.Preferences;
+using BuildImprovements.Configuration;
 using Il2Cpp;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppMonomiPark.SlimeRancher.Event;

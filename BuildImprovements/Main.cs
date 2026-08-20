@@ -1,6 +1,6 @@
 ﻿using BuildImprovements.Input;
 using BuildImprovements.Patches;
-using BuildImprovements.Preferences;
+using BuildImprovements.Configuration;
 using BuildImprovements.UI;
 using Il2Cpp;
 using Il2CppTMPro;

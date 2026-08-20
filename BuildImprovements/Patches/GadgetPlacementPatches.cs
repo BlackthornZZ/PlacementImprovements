@@ -1,5 +1,5 @@
 ﻿using BuildImprovements.Input;
-using BuildImprovements.Preferences;
+using BuildImprovements.Configuration;
 using BuildImprovements.UI;
 using HarmonyLib;
 using Il2Cpp;

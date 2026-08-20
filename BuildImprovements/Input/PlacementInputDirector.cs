@@ -1,5 +1,5 @@
 ﻿using BuildImprovements.Injected;
-using BuildImprovements.Preferences;
+using BuildImprovements.Configuration;
 using Il2Cpp;
 using Il2CppMonomiPark.SlimeRancher.Input;
 using Il2CppMonomiPark.SlimeRancher.Player.PlayerItems;

@@ -2,7 +2,7 @@
 using Il2CppMonomiPark.SlimeRancher.Player.PlayerItems;
 using UnityEngine;
 using Il2CppMonomiPark.SlimeRancher.Rendering.Pass;
-using BuildImprovements.Preferences;
+using BuildImprovements.Configuration;
 
 namespace BuildImprovements.Patches;
 public enum EGadgetValidity

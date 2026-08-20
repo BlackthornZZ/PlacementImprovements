@@ -9,7 +9,7 @@ using Starlight.Utils;
 using System.Configuration;
 using UnityEngine;
 
-namespace BuildImprovements.Preferences;
+namespace BuildImprovements.Configuration;
 public static class PreferenceDirector
 {
     public static readonly MelonPreferences_Category ColorPreferences = MelonPreferences.CreateCategory("Placement Improvements - Colors"); 
