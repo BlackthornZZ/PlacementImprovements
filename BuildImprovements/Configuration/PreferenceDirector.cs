@@ -17,42 +17,42 @@ public static class PreferenceDirector
     public static readonly MelonPreferences_Category KeybindPreferences = MelonPreferences.CreateCategory("Placement Improvements - Keybinds");
 
     // Enabled/disabled flags for individual build improvements.
-    internal static bool bAllowSlopedPlacementAngle
+    internal static bool AllowSlopedPlacementAngle
     {
         get => SettingPreferences.GetEntry<bool>("SlopedPlacementAngles").Value;
         private set => SetConfigValue<bool>(SettingPreferences, "SlopedPlacementAngles", value);
     }
-    internal static bool bIgnorePlayerGroundedState
+    internal static bool IgnorePlayerGroundedState
     {
         get => SettingPreferences.GetEntry<bool>("IgnorePlayerGrounded").Value;
         private set => SetConfigValue<bool>(SettingPreferences, "IgnorePlayerGrounded", value);
     }
-    internal static bool bAllowClipping
+    internal static bool AllowClipping
     {
         get => SettingPreferences.GetEntry<bool>("AllowClipping").Value;
         private set => SetConfigValue<bool>(SettingPreferences, "AllowClipping", value);
     }
-    internal static bool bAllowAdvancedMovement
+    internal static bool AllowAdvancedMovement
     {
         get => SettingPreferences.GetEntry<bool>("AllowAdvancedMovement").Value;
         private set => SetConfigValue<bool>(SettingPreferences, "AllowAdvancedMovement", value);
     }
-    internal static bool bAllowPrismacoreGadgets 
+    internal static bool AllowPrismacoreGadgets 
     {
         get => SettingPreferences.GetEntry<bool>("AllowPrismacoreGadgets").Value;
         private set => SetConfigValue<bool>(SettingPreferences, "AllowPrismacoreGadgets", value);
     }
-    internal static bool bAllowFloatingGadgets
+    internal static bool AllowFloatingGadgets
     {
         get => SettingPreferences.GetEntry<bool>("AllowFloatingGadgets").Value;
         private set => SetConfigValue<bool>(SettingPreferences, "AllowFloatingGadgets", value);
     }
-    internal static bool bInfiniteLinkedRange
+    internal static bool InfiniteLinkedRange
     {
         get => SettingPreferences.GetEntry<bool>("InfiniteLinkedRange").Value;
         private set => SetConfigValue<bool>(SettingPreferences, "InfiniteLinkedRange", value);
     }
-    internal static bool bInvertSmoothNudge 
+    internal static bool InvertSmoothNudge 
     {
         get => SettingPreferences.GetEntry<bool>("InvertSmoothNudge").Value;
         private set => SetConfigValue<bool>(SettingPreferences, "InvertSmoothNudge", value);
@@ -134,7 +134,7 @@ public static class PreferenceDirector
     }
 
     // Nudging features
-    internal static bool bSmoothNudge => bInvertSmoothNudge ^ InputEUtil.OnKey(SmoothNudgeBind);
+    internal static bool SmoothNudge => InvertSmoothNudge ^ InputEUtil.OnKey(SmoothNudgeBind);
     internal static float NudgeIncrementScale
     {
         get => SettingPreferences.GetEntry<float>("NudgeIncrement").Value;
@@ -148,8 +148,6 @@ public static class PreferenceDirector
 
     // Configuration API
     internal static HashSet<Configurator> ExternalConfigurators = new();
-
-
 
     // Called upon in Main::OnLateInitialize to set up the preference categories.
     internal static void CreatePreferences()

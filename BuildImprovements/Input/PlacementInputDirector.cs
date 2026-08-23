@@ -88,7 +88,7 @@ public class PlacementInputDirector
     public void DoNudge()
     {
         Vector3 NudgeDelta = Vector3.zero;
-        float NudgeDeltaMultiplier = PreferenceDirector.bSmoothNudge ? PreferenceDirector.NudgeSpeed * Time.deltaTime : PreferenceDirector.NudgeIncrementScale;
+        float NudgeDeltaMultiplier = PreferenceDirector.SmoothNudge ? PreferenceDirector.NudgeSpeed * Time.deltaTime : PreferenceDirector.NudgeIncrementScale;
 
         // Up / Down
         if (CheckNudgeKey(PreferenceDirector.NudgeUpBind))
@@ -116,9 +116,9 @@ public class PlacementInputDirector
 
         if((InitialLockedPlacementPosition - (LockedPlacementPosition + NudgeDelta)).sqrMagnitude >= 100)
         {
-            if (!PreferenceDirector.bSmoothNudge || Time.timeSinceLevelLoad - LastNudgeWarning >= NudgeWarningInterval)
+            if (!PreferenceDirector.SmoothNudge || Time.timeSinceLevelLoad - LastNudgeWarning >= NudgeWarningInterval)
             {
-                if (PreferenceDirector.bSmoothNudge)
+                if (PreferenceDirector.SmoothNudge)
                     LastNudgeWarning = Time.timeSinceLevelLoad;
 
                 PlayerGadgetItem.PlayTransientAudio(PlayerGadgetItem.GadgetItemMetadata.BlockedPlacementErrorCue);
@@ -159,7 +159,7 @@ public class PlacementInputDirector
         PlayerGadgetItem.SetHeldGadget(TargetedDefinition);
 
     }
-    internal static bool CheckNudgeKey(KeyCode inKey) => PreferenceDirector.bSmoothNudge ? InputEUtil.OnKey(inKey) : InputEUtil.OnKeyDown(inKey);
+    internal static bool CheckNudgeKey(KeyCode inKey) => PreferenceDirector.SmoothNudge ? InputEUtil.OnKey(inKey) : InputEUtil.OnKeyDown(inKey);
     public void SetPlacementLocked(bool bNewPlacementLocked)
     {
         // Can't set placement locked if there's no instance to lock!
@@ -184,7 +184,7 @@ public class PlacementInputDirector
     // InputEvent callbacks
     public static void GadgetLock_Performed(InputEventData Data)
     {
-        if (!PreferenceDirector.bAllowAdvancedMovement) return;
+        if (!PreferenceDirector.AllowAdvancedMovement) return;
 
         if (Main.PlacementInputDirector.PlayerGadgetItem._isFootprintVisible && SceneContext.Instance.GadgetDirector.SelectedSlottedGadget != null)
             Main.PlacementInputDirector.SetPlacementLocked(!Main.PlacementInputDirector.bPlacementLocked);

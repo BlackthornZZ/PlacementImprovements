@@ -97,7 +97,7 @@ internal class AdditiveUIDirector
 
         Control = new()
         {
-            Description = LanguageEUtil.AddTranslation(PreferenceDirector.bInvertSmoothNudge ? "Grid-based Nudge" : "Smooth Nudge"),
+            Description = LanguageEUtil.AddTranslation(PreferenceDirector.InvertSmoothNudge ? "Grid-based Nudge" : "Smooth Nudge"),
             Input = InputRegistrar.EventStore.SmoothNudge
         };
         Instructions.Add(Control);
@@ -129,11 +129,11 @@ internal class AdditiveUIDirector
         ChangeInputHintLabel(GadgetLockedInputLegend, GadgetItemData.StoreGadget, UnlockLabel);
         // "Gadget Inventory" input event. Couldn't find where it was stored but this works fine.
         RemoveInputHint(GadgetLockedInputLegend, GadgetInputLegendConfig.NoSelectionOrTargetInputLegend._hints.First().InputEvent);
-        AddNewKeybindToInputLegend(GadgetLockedInputLegend, PreferenceDirector.bInvertSmoothNudge ? GridNudgeLabel : SmoothNudgeLabel, InputRegistrar.EventStore.SmoothNudge);
+        AddNewKeybindToInputLegend(GadgetLockedInputLegend, PreferenceDirector.InvertSmoothNudge ? GridNudgeLabel : SmoothNudgeLabel, InputRegistrar.EventStore.SmoothNudge);
         AddNewKeybindToInputLegend(GadgetLockedInputLegend, NudgeLabel, InputRegistrar.EventStore.NudgeUpDown);
         AddNewKeybindToInputLegend(GadgetLockedInputLegend, NudgeLabel, InputRegistrar.EventStore.NudgeForwardBack, InputRegistrar.EventStore.NudgeLeftRight);
 
-        if(PreferenceDirector.bAllowAdvancedMovement)
+        if(PreferenceDirector.AllowAdvancedMovement)
             ChangeGadgetLockInputHints(true, GadgetInputLegendConfig);
 
         InsertKeybindAfter(GadgetInputLegendConfig.GadgetSelectedInputLegend, GadgetItemData.PlaceGadget, CopyGadgetLabel, InputRegistrar.EventStore.GadgetEyedrop);
@@ -165,7 +165,7 @@ internal class AdditiveUIDirector
     }
 
     public void ChangeSmoothNudgeLabel(bool bInverted)
-        => ChangeInputHintLabel(GadgetLockedInputLegend!, InputRegistrar.EventStore.SmoothNudge, PreferenceDirector.bInvertSmoothNudge ? GridNudgeLabel : SmoothNudgeLabel);
+        => ChangeInputHintLabel(GadgetLockedInputLegend!, InputRegistrar.EventStore.SmoothNudge, PreferenceDirector.InvertSmoothNudge ? GridNudgeLabel : SmoothNudgeLabel);
     public static void AddNewKeybindToInputLegend(InputLegendConfiguration LegendConfig, string Descriptor, InputEvent Event, InputEvent? AdditionalInputEvent = null) => 
         AddNewKeybindToInputLegend(LegendConfig,LanguageEUtil.AddTranslation(Descriptor), Event, AdditionalInputEvent);
     public static void AddNewKeybindToInputLegend(InputLegendConfiguration LegendConfig, LocalizedString Label, InputEvent Event, InputEvent? AdditionalInputEvent = null)

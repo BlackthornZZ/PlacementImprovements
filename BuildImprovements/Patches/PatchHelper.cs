@@ -37,23 +37,23 @@ public class PatchHelper
         if (Main.PlacementInputDirector.bPlacementLocked)
             Main.PlacementInputDirector.SetLockedTransform();
 
-        if (!InGadgetItem._isGrounded && !PreferenceDirector.bIgnorePlayerGroundedState)
+        if (!InGadgetItem._isGrounded && !PreferenceDirector.IgnorePlayerGroundedState)
             return EGadgetValidity.GV_Invalid;
 
-        if (!bTransient_SlopeIsLegal && !PreferenceDirector.bAllowSlopedPlacementAngle)
+        if (!bTransient_SlopeIsLegal && !PreferenceDirector.AllowSlopedPlacementAngle)
             return EGadgetValidity.GV_Invalid;
 
-        if (!PreferenceDirector.bAllowFloatingGadgets && !InGadgetItem._gadgetPlaceholderInstanceGadget.IsCompletelyGrounded(InGadgetItem.GadgetItemMetadata.GroundedCheckAdjustment, InGadgetItem.GadgetItemMetadata.GroundedRaycastDistance))
+        if (!PreferenceDirector.AllowFloatingGadgets && !InGadgetItem._gadgetPlaceholderInstanceGadget.IsCompletelyGrounded(InGadgetItem.GadgetItemMetadata.GroundedCheckAdjustment, InGadgetItem.GadgetItemMetadata.GroundedRaycastDistance))
             return EGadgetValidity.GV_Invalid;
 
-        if (!InGadgetItem.IsLinkedGadgetInRange && !PreferenceDirector.bInfiniteLinkedRange)
+        if (!InGadgetItem.IsLinkedGadgetInRange && !PreferenceDirector.InfiniteLinkedRange)
             return EGadgetValidity.GV_Invalid;
 
         if (InGadgetItem._gadgetPlaceholderInstanceGadget.IsOverlapping(
             InGadgetItem.GadgetItemMetadata.OverlapPlacementFloorTolerance, 
             InGadgetItem.GadgetItemMetadata.GadgetOverlapLayers))
         {
-            if (!PreferenceDirector.bAllowClipping)
+            if (!PreferenceDirector.AllowClipping)
                 return EGadgetValidity.GV_Invalid;
             else
                 return EGadgetValidity.GV_AlmostValid;
@@ -72,7 +72,7 @@ public class PatchHelper
 
             if (SlopeAngle >= MaxValidSlope)
             {
-                return PreferenceDirector.bAllowSlopedPlacementAngle;
+                return PreferenceDirector.AllowSlopedPlacementAngle;
             }
         }
 

@@ -21,15 +21,15 @@ static class GadgetItemPatches
     [HarmonyPatch(nameof(GadgetItem.UpdateFootprint))]
     private static void UpdateFootprint_Postfix(GadgetItem __instance)
     {
-        if(PreferenceDirector.bAllowAdvancedMovement)
+        if(PreferenceDirector.AllowAdvancedMovement)
             Main.PlacementInputDirector.OnPostGadgetItemFootprintUpdate();
 
         Main.PatchHelper.SetGadgetVisuals(Main.PatchHelper.CurrentValidity, __instance);
 
         // For GadgetItem::PlaceGadgetEvent.
         if (__instance._isPlacementBlocked)
-            __instance._isPlacementBlocked = PreferenceDirector.bAllowClipping ? false : true;
-        __instance._isPlacementValid |= PreferenceDirector.bAllowSlopedPlacementAngle;
+            __instance._isPlacementBlocked = PreferenceDirector.AllowClipping ? false : true;
+        __instance._isPlacementValid |= PreferenceDirector.AllowSlopedPlacementAngle;
         __instance._isFootprintVisible |= Main.PlacementInputDirector.bPlacementLocked;
 
         __instance._gadgetDirector._CanPlaceSelectedGadget_k__BackingField.Set(Main.PatchHelper.CurrentValidity != EGadgetValidity.GV_Invalid);
@@ -38,7 +38,7 @@ static class GadgetItemPatches
     [HarmonyPatch(nameof(GadgetItem.SetHeldGadget))]
     private static void SetHeldGadget_Postfix(GadgetItem __instance)
     {
-        if (PreferenceDirector.bAllowAdvancedMovement)
+        if (PreferenceDirector.AllowAdvancedMovement)
         {
             Main.PlacementInputDirector.OnGadgetSelected();
         }
@@ -49,7 +49,7 @@ static class GadgetItemPatches
     [HarmonyPatch(nameof(GadgetItem.IsPlacementValid))]
     private static void IsPlacementValid_Postfix(GadgetItem __instance, Ray ray, RaycastHit hit, ref bool __result)
     {
-        if (PreferenceDirector.bAllowAdvancedMovement && Main.PlacementInputDirector.bPlacementLocked)
+        if (PreferenceDirector.AllowAdvancedMovement && Main.PlacementInputDirector.bPlacementLocked)
             Main.PlacementInputDirector.SetLockedTransform();
 
         if (__instance.GadgetItemMetadata)
@@ -64,7 +64,7 @@ static class GadgetItemPatches
     [HarmonyPatch(nameof(GadgetItem.ClearHeldGadget))]
     private static void ClearHeldGadget_Postfix()
     {
-        if (!PreferenceDirector.bAllowAdvancedMovement) return;
+        if (!PreferenceDirector.AllowAdvancedMovement) return;
 
         Main.PlacementInputDirector.OnGadgetCleared();
     }
@@ -74,7 +74,7 @@ static class GadgetItemPatches
     [HarmonyPatch(nameof(GadgetItem.StoreGadget))]
     private static bool StoreGadget_Prefix()
     {
-        if(PreferenceDirector.bAllowAdvancedMovement && Main.PlacementInputDirector.bPlacementLocked)
+        if(PreferenceDirector.AllowAdvancedMovement && Main.PlacementInputDirector.bPlacementLocked)
         {
             Main.PlacementInputDirector.SetPlacementLocked(false);
             return false;
@@ -86,7 +86,7 @@ static class GadgetItemPatches
     [HarmonyPatch(nameof(GadgetItem.IsInLinkedGadgetRange))]
     private static void IsInLinkedGadgetRange_Postfix(ref bool __result)
     {
-        if (PreferenceDirector.bInfiniteLinkedRange) __result = true;
+        if (PreferenceDirector.InfiniteLinkedRange) __result = true;
     }
 };
 [HarmonyPatch(typeof(DisableGadgetModeTrigger))]
@@ -103,7 +103,7 @@ static class DisableGadgetModeTriggerPatches
     [HarmonyPatch(nameof(DisableGadgetModeTrigger.OnTriggerEnter))]
     private static bool OnTriggerEnter_Prefix(DisableGadgetModeTrigger __instance)
     {
-        return !(PreferenceDirector.bAllowPrismacoreGadgets && IsPrismacoreGadgetModeDisabler(__instance.gameObject) && PrismacoreHarmonized());
+        return !(PreferenceDirector.AllowPrismacoreGadgets && IsPrismacoreGadgetModeDisabler(__instance.gameObject) && PrismacoreHarmonized());
     }
 };
 
