@@ -146,6 +146,9 @@ public static class PreferenceDirector
         private set => SetConfigValue<float>(SettingPreferences, "NudgeSpeed", value);
     }
 
+    // Configuration API
+    internal static HashSet<Configurator> ExternalConfigurators = new();
+
 
 
     // Called upon in Main::OnLateInitialize to set up the preference categories.
@@ -201,7 +204,7 @@ public static class PreferenceDirector
             default_value: true,
             display_name: "Ignore \"MUST STAND ON GROUND\" Requirement",
             description: "Whether to allow gadgets to be placed while the player isn't grounded."
-            );
+            );  
 
         SettingPreferences.CreateEntry(
             identifier: "AllowAdvancedMovement",
