@@ -10,7 +10,9 @@ namespace BuildImprovements.Configuration;
 
 public sealed class PreferenceEntry
 {
-    internal MelonPreferences_Entry<bool> MelonEntry { get; private set; }
+    internal readonly MelonPreferences_Entry<bool> MelonEntry;
+    // If this is TRUE, this config will never show up for the player, even when unlocked.
+    private readonly bool PersistentHidden;
     public bool Overridden { get; private set; } = false;
     public bool Value
     {
@@ -22,6 +24,7 @@ public sealed class PreferenceEntry
     public static implicit operator bool(PreferenceEntry Entry) => Entry.Value;
     internal PreferenceEntry(MelonPreferences_Entry<bool> MelonEntry)
     {
+        PersistentHidden = MelonEntry.IsHidden;
         this.MelonEntry = MelonEntry;
     }
     public void ApplyWithFlags(Configurator.ConfiguratorOperationFlag Flags, bool Other)
@@ -32,7 +35,8 @@ public sealed class PreferenceEntry
         Value = Other;
         Overridden = true;
         Locked |= (Flags & Configurator.ConfiguratorOperationFlag.LockWhenChanged) != 0;
-        MelonEntry.IsHidden = Locked;
+        if(!PersistentHidden)
+            MelonEntry.IsHidden = Locked;
     }
     public void ClearOverride()
     {
