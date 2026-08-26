@@ -155,7 +155,7 @@ public static class PreferenceDirector
         CreateConfigurableBoolean("FloatingGadgets", true, "Allow Floating Gadgets", "Note: very unforgiving when off!");
         CreateConfigurableBoolean("InfiniteLinkedRange", false, "Infinite Linked Gadget Range");
         CreateConfigurableBoolean("InvertedSmoothNudge", false, "Invert Smooth Nudge", "When this is turned on, smooth nudging will be the default, while holding its key results in the incremental nudge being enabled.");
-        CreateConfigurableBoolean("NudgeMaxDistance", true, "Nudge Max Distance", "Whether the nudge should have a maximum distance, which feels more fitting for the game.");
+        CreateConfigurableBoolean("NudgeMaxDistance", true, "Nudge Max Distance", "Whether the nudge should have a maximum distance.");
 
         SettingPreferences.CreateEntry(
             identifier: "NudgeIncrement",

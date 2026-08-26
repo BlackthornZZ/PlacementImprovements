@@ -38,15 +38,7 @@ internal class AdditiveUIDirector
     internal static readonly LocalizedString UnlockLabel = LanguageEUtil.AddTranslation("Unlock");
     internal static readonly List<Sprite> AdvancedMovementTutorialAnimFrames = new() { EmbeddedResourceEUtil.LoadSprite("Assets.LockClosed.png"), EmbeddedResourceEUtil.LoadSprite("Assets.LockOpen.png") };
     internal StaticGameEvent AdvancedMovementTutorialPlayedEvent = null!;
-    public TutorialDefinition AdvancedMovementTutorial 
-    { 
-        get
-        {
-            if (_AdvancedMovementTutorial == null)
-                _AdvancedMovementTutorial = MakeAdvancedMovementTutorial();
-            return _AdvancedMovementTutorial;
-        }
-    }
+    public TutorialDefinition AdvancedMovementTutorial => _AdvancedMovementTutorial ?? MakeAdvancedMovementTutorial();
 
     internal AdditiveUIDirector()
     {
@@ -149,8 +141,7 @@ internal class AdditiveUIDirector
 
     public void ChangeGadgetLockInputHints(bool bEnabled, GadgetInputLegendConfiguration? GadgetInputLegendConfig = null)
     {
-        if (GadgetInputLegendConfig == null)
-            GadgetInputLegendConfig = HudUI.Instance.BottomInputLegend.gameObject.GetComponent<GadgetInputLegendUpdater>()._inputLegendConfiguration;
+        GadgetInputLegendConfig ??= HudUI.Instance.BottomInputLegend.gameObject.GetComponent<GadgetInputLegendUpdater>()._inputLegendConfiguration;
 
         if(bEnabled)
         {

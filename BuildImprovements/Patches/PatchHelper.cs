@@ -81,10 +81,8 @@ public class PatchHelper
 
     public void SetGadgetVisuals(EGadgetValidity Validity, GadgetItem InGadgetItem = null!, GadgetsOverlayModeCustomPass Pass = null!)
     {
-        if (!InGadgetItem)
-            InGadgetItem = SceneContext.Instance.player.GetComponent<PlayerItemController>().GadgetItem;
-        if (Pass == null)
-            Pass = InGadgetItem._gadgetsOverlayCustomPass;
+        InGadgetItem ??= SceneContext.Instance.player.GetComponent<PlayerItemController>().GadgetItem;
+        Pass ??= InGadgetItem._gadgetsOverlayCustomPass;
 
         switch(Validity)
         {
@@ -102,10 +100,8 @@ public class PatchHelper
 
     public void SetGadgetPlacementColor(Color InRGB, GadgetItem InGadgetItem = null!, GadgetsOverlayModeCustomPass GadgetOverlayPass = null!, bool bUseInvalidColor = false)
     {
-        if (!InGadgetItem)
-            InGadgetItem = SceneContext.Instance.player.GetComponent<PlayerItemController>().GadgetItem;
-        if (GadgetOverlayPass == null)
-            GadgetOverlayPass = InGadgetItem._gadgetsOverlayCustomPass;
+        InGadgetItem ??= SceneContext.Instance.player.GetComponent<PlayerItemController>().GadgetItem;
+        GadgetOverlayPass ??= InGadgetItem._gadgetsOverlayCustomPass;
 
         if (InGadgetItem._gadgetFootprintRendererInstance)
         {
