@@ -114,7 +114,7 @@ public class PlacementInputDirector
 
         //SceneContext.Instance.eventDirector.RaiseEvent(NudgeGameEventQueryComponent.OnNudgedEvent);
 
-        if((InitialLockedPlacementPosition - (LockedPlacementPosition + NudgeDelta)).sqrMagnitude >= 100)
+        if(PreferenceDirector.NudgeMaxDistance && (InitialLockedPlacementPosition - (LockedPlacementPosition + NudgeDelta)).sqrMagnitude >= 100)
         {
             if (!PreferenceDirector.SmoothNudge || Time.timeSinceLevelLoad - LastNudgeWarning >= NudgeWarningInterval)
             {
