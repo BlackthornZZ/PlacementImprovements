@@ -1,13 +1,10 @@
 ﻿using BuildImprovements.Input;
-using BuildImprovements.Patches;
-using BuildImprovements.UI;
 using Il2Cpp;
-using Il2CppMonomiPark.SlimeRancher.UI.Gadget;
 using MelonLoader;
 using MelonLoader.Preferences;
 using Starlight.Utils;
-using System.Configuration;
 using UnityEngine;
+using UnityEngine.Playables;
 
 namespace BuildImprovements.Configuration;
 public static class PreferenceDirector
@@ -17,47 +14,14 @@ public static class PreferenceDirector
     public static readonly MelonPreferences_Category KeybindPreferences = MelonPreferences.CreateCategory("Placement Improvements - Keybinds");
 
     // Enabled/disabled flags for individual build improvements.
-    internal static bool AllowSlopedPlacementAngle
-    {
-        get => SettingPreferences.GetEntry<bool>("SlopedPlacementAngles").Value;
-        private set => SetConfigValue<bool>(SettingPreferences, "SlopedPlacementAngles", value);
-    }
-    internal static bool IgnorePlayerGroundedState
-    {
-        get => SettingPreferences.GetEntry<bool>("IgnorePlayerGrounded").Value;
-        private set => SetConfigValue<bool>(SettingPreferences, "IgnorePlayerGrounded", value);
-    }
-    internal static bool AllowClipping
-    {
-        get => SettingPreferences.GetEntry<bool>("AllowClipping").Value;
-        private set => SetConfigValue<bool>(SettingPreferences, "AllowClipping", value);
-    }
-    internal static bool AllowAdvancedMovement
-    {
-        get => SettingPreferences.GetEntry<bool>("AllowAdvancedMovement").Value;
-        private set => SetConfigValue<bool>(SettingPreferences, "AllowAdvancedMovement", value);
-    }
-    internal static bool AllowPrismacoreGadgets 
-    {
-        get => SettingPreferences.GetEntry<bool>("AllowPrismacoreGadgets").Value;
-        private set => SetConfigValue<bool>(SettingPreferences, "AllowPrismacoreGadgets", value);
-    }
-    internal static bool AllowFloatingGadgets
-    {
-        get => SettingPreferences.GetEntry<bool>("AllowFloatingGadgets").Value;
-        private set => SetConfigValue<bool>(SettingPreferences, "AllowFloatingGadgets", value);
-    }
-    internal static bool InfiniteLinkedRange
-    {
-        get => SettingPreferences.GetEntry<bool>("InfiniteLinkedRange").Value;
-        private set => SetConfigValue<bool>(SettingPreferences, "InfiniteLinkedRange", value);
-    }
-    internal static bool InvertSmoothNudge 
-    {
-        get => SettingPreferences.GetEntry<bool>("InvertSmoothNudge").Value;
-        private set => SetConfigValue<bool>(SettingPreferences, "InvertSmoothNudge", value);
-    }
-
+    public static PreferenceEntry AllowSlopedPlacementAngle => GlobalConfiguration["SlopedPlacementAngles"];
+    public static PreferenceEntry IgnorePlayerGroundedState => GlobalConfiguration["IgnorePlayerGrounded"];
+    public static PreferenceEntry AllowClipping => GlobalConfiguration["Clipping"];
+    public static PreferenceEntry AllowAdvancedMovement => GlobalConfiguration["AdvancedMovement"];
+    public static PreferenceEntry AllowPrismacoreGadgets => GlobalConfiguration["PrismacoreGadgets"];
+    public static PreferenceEntry AllowFloatingGadgets => GlobalConfiguration["FloatingGadgets"];
+    public static PreferenceEntry InfiniteLinkedRange => GlobalConfiguration["InfiniteLinkedRange"];
+    public static PreferenceEntry InvertSmoothNudge => GlobalConfiguration["InvertedSmoothNudge"];
 
     // Placement colors
     // Public for use by SR2MP.
@@ -147,7 +111,8 @@ public static class PreferenceDirector
     }
 
     // Configuration API
-    internal static HashSet<Configurator> ExternalConfigurators = new();
+    internal static readonly HashSet<Configurator> ExternalConfigurators = new();
+    internal static readonly Dictionary<string, PreferenceEntry> GlobalConfiguration = new();
 
     // Called upon in Main::OnLateInitialize to set up the preference categories.
     internal static void CreatePreferences()
@@ -178,58 +143,17 @@ public static class PreferenceDirector
             is_hidden: false
             );
 
-        SubscribeToConfigChanges(ColorPreferences, new[] { "ValidColor", "InvalidColor" }, new LemonAction<object, object>[] { ValidColorChanged, InvalidColorChanged});
+        SubscribeToConfigChanges(ColorPreferences, new[] { "ValidColor", "InvalidColor" }, new LemonAction<object, object>[] { ValidColorChanged, InvalidColorChanged });
 
         // == Rules ==
-        // Likely server & client side
-        SettingPreferences.CreateEntry(
-            identifier: "AllowClipping",
-            default_value: true,
-            display_name: "Allow Clipping",
-            description: "Ignore \"BLOCKED\" placement failure and turn the placement \"almost valid\" when doing so."
-            );
-
-        SettingPreferences.CreateEntry(
-            identifier: "SlopedPlacementAngles",
-            default_value: true,
-            display_name: "Allow sloped Placement Angles",
-            description: "Allows placement of gadgets at any angle."
-            );
-
-        // Client-side (unless the validity state of a placement is handled on each client seperately)
-        SettingPreferences.CreateEntry(
-            identifier: "IgnorePlayerGrounded",
-            default_value: true,
-            display_name: "Ignore \"MUST STAND ON GROUND\" Requirement",
-            description: "Whether to allow gadgets to be placed while the player isn't grounded."
-            );  
-
-        SettingPreferences.CreateEntry(
-            identifier: "AllowAdvancedMovement",
-            default_value: true,
-            display_name: "Allow Advanced Placement Movement",
-            description: "Whether to enable the advanced movement keybinds. (locking a placement into place, nudging a placement)"
-            );
-
-        SettingPreferences.CreateEntry(
-            identifier: "AllowPrismacoreGadgets",
-            default_value: true,
-            display_name: "Prismacore Gadget Mode",
-            description: "Whether to allow building gadgets in the Prismacore (when it is harmonized)."
-            );
-
-        SettingPreferences.CreateEntry(
-            identifier: "AllowFloatingGadgets",
-            default_value: true,
-            display_name: "Allow Floating Gadgets",
-            description: "Whether gadgets are considered valid while floating. (Very unforgiving if off!)");
-
-        SettingPreferences.CreateEntry(
-            identifier: "InfiniteLinkedRange",
-            default_value: false,
-            display_name: "Infinite Linked Gadget Range",
-            description: "Whether Linked Gadgets should consider their range during placement validity checks."
-            );
+        CreateConfigurableBoolean("Clipping", true, "Allow Clipping", "Ignore \"BLOCKED\" placement failure and turn the placement \"almost valid\" when doing so.");
+        CreateConfigurableBoolean("SlopedPlacementAngles", true, "Allow sloped Placement Angles", "Allows placement of gadgets at any angle.");
+        CreateConfigurableBoolean("IgnorePlayerGrounded", true, "Ignore \"MUST STAND ON GROUND\" Requirement");
+        CreateConfigurableBoolean("AdvancedMovement", true, "Allow Advanced Placement Movement", "Whether to enable the advanced movement keybinds.");
+        CreateConfigurableBoolean("PrismacoreGadgets", true, "Prismacore Gadget Mode", "Whether to allow building gadgets in the Prismacore (when it is harmonized).");
+        CreateConfigurableBoolean("FloatingGadgets", true, "Allow Floating Gadgets", "Note: very unforgiving when off!");
+        CreateConfigurableBoolean("InfiniteLinkedRange", false, "Infinite Linked Gadget Range");
+        CreateConfigurableBoolean("InvertedSmoothNudge", false, "Invert Smooth Nudge", "When this is turned on, smooth nudging will be the default, while holding its key results in the incremental nudge being enabled.");
 
         SettingPreferences.CreateEntry(
             identifier: "NudgeIncrement",
@@ -243,14 +167,8 @@ public static class PreferenceDirector
             display_name: "Smooth Nudge Speed",
             description: "When Smooth Nudge is ON: the speed at which the placement will move when nudging.");
 
-        SettingPreferences.CreateEntry(
-            identifier: "InvertSmoothNudge",
-            default_value: false,
-            display_name: "Invert Smooth Nudge",
-            description: "When this is turned on, smooth nudging will be the default, while holding its key results in the incremental nudge being enabled.");
-
-        SettingPreferences.GetEntry("AllowAdvancedMovement").OnEntryValueChangedUntyped.Subscribe(AdvancedMovementChanged);
-        SettingPreferences.GetEntry("InvertSmoothNudge").OnEntryValueChangedUntyped.Subscribe(InvertSmoothNudgeChanged);
+        SettingPreferences.GetEntry("AdvancedMovement").OnEntryValueChangedUntyped.Subscribe(AdvancedMovementChanged);
+        SettingPreferences.GetEntry("InvertedSmoothNudge").OnEntryValueChangedUntyped.Subscribe(InvertSmoothNudgeChanged);
 
         // == Keybindings ==
         // Client-side
@@ -315,11 +233,46 @@ public static class PreferenceDirector
             display_name: "(Keybind) Gadget Eyedropper"
             );
 
-        SubscribeToConfigChanges(KeybindPreferences,
-            new[] { "LockPlacementBind", "NudgeUpBind", "NudgeDownBind", "NudgeForwardBind", "NudgeLeftBind", "NudgeRightBind", "NudgeBackwardBind", "SmoothNudgeBind", "GadgetEyedropperMiddleClick", "GadgetEyedropperBind" },
-            AnyKeybindChanged);
-
+        SubscribeToConfigChanges(KeybindPreferences, AnyKeybindChanged, "LockPlacementBind", "NudgeUpBind", "NudgeDownBind", "NudgeForwardBind", "NudgeLeftBind", "NudgeRightBind", "NudgeBackwardBind", "SmoothNudgeBind", "GadgetEyedropperMiddleClick", "GadgetEyedropperBind");
     }
+    private static PreferenceEntry CreateConfigurableBoolean(string Identifier, bool DefaultValue, string? DisplayName = null, string? Description = null, bool IsHidden = false, bool DontSaveDefault = false, ValueValidator? Validator = null)
+    {
+        MelonPreferences_Entry<bool> MelonEntry = SettingPreferences.CreateEntry<bool>(Identifier, DefaultValue, DisplayName, Description, IsHidden, DontSaveDefault, Validator);
+        PreferenceEntry Entry = new PreferenceEntry(MelonEntry);
+        GlobalConfiguration.Add(Identifier, Entry);
+        return Entry;
+    }
+
+    internal static void ApplyExternalConfigurators()
+    {
+        List<Configurator> ConfiguratorsByPriority = ExternalConfigurators.ToList();
+        ConfiguratorsByPriority.Sort((a, b) => a.CompareTo(b));
+
+        foreach (Configurator ExternalConfig in ConfiguratorsByPriority)
+        {
+            MelonLogger.Msg("Applying External Configurator (Source: {0}) with {1} override(s)", ExternalConfig.Source, ExternalConfig.ConfigurationOverrides.Count);
+            foreach (KeyValuePair<string, bool> Override in ExternalConfig.ConfigurationOverrides)
+            {
+                if(!GlobalConfiguration.ContainsKey(Override.Key))
+                {
+                    MelonLogger.Warning("External configurator (Source: {0}) attemped to change a config (\"{1}\", with value {2}) that doesn't exist or can't be externally configured. Not all Melon preference entries can be configured.", ExternalConfig.Source, Override.Key, Override.Value);
+                    continue;
+                }
+                GlobalConfiguration[Override.Key].ApplyWithFlags(ExternalConfig.ConfiguratorFlags, Override.Value);
+            }
+        }
+    }
+
+    internal static void UpdateGlobalConfiguration()
+    {
+        foreach (KeyValuePair<string, PreferenceEntry> Config in GlobalConfiguration)
+        {
+            Config.Value.ClearOverride();
+        }
+
+        ApplyExternalConfigurators();
+    }
+
     // The methods you pass must have the following outline:
     // void Method(object OldValue, object NewValue)
     // You will have to cast them to the correct type from within the method.
@@ -333,7 +286,7 @@ public static class PreferenceDirector
     }
 
     // Link all identifiers to one method.
-    private static void SubscribeToConfigChanges(MelonPreferences_Category Category, string[] Identifiers, LemonAction<object, object> Method)
+    private static void SubscribeToConfigChanges(MelonPreferences_Category Category, LemonAction<object, object> Method, params string[] Identifiers)
     {
         foreach(string ID in Identifiers)
             Category.GetEntry(ID).OnEntryValueChangedUntyped.Subscribe(Method);
@@ -364,7 +317,7 @@ public static class PreferenceDirector
     // Helpers
     // ==========
     // Parses a color from a string with format 'R,G,B'. If the color could not be parsed, the Fallback parameter is returned.
-    internal static Color ParseColor(string value, int a = 255, Color Fallback = default)
+    private static Color ParseColor(string value, int a = 255, Color Fallback = default)
     {
         string[] Components = value.Split(',');
 
@@ -381,7 +334,7 @@ public static class PreferenceDirector
             Math.Clamp((float)a / 255f, 0f, 1f));
     }
     // Sets the config value 'key' within 'Category' to 'value'.
-    internal static void SetConfigValue<T>(MelonPreferences_Category Category, string key, T value)
+    private static void SetConfigValue<T>(MelonPreferences_Category Category, string key, T value)
     {
         Category.GetEntry<T>(key).Value = value;
         MelonPreferences.SaveCategory<MelonPreferences_Category>(Category.Identifier);

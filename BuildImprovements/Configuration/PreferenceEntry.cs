@@ -8,33 +8,35 @@ using System.Threading.Tasks;
 
 namespace BuildImprovements.Configuration;
 
-internal sealed class PreferenceEntry : ConfigurationEntry
+public sealed class PreferenceEntry
 {
-    internal MelonPreferences_Entry<bool> MelonEntry;
-    public override bool Value
+    internal MelonPreferences_Entry<bool> MelonEntry { get; private set; }
+    public bool Overridden { get; private set; } = false;
+    public bool Value
     {
-        get => Overridden ? _Value : MelonEntry.Value;
-        protected internal set => _Value = value;
+        get => Overridden ? OverridenValue : MelonEntry.Value;
+        private set => OverridenValue = value;
     }
-    private bool _Value;
-    public bool Locked { get; private set; }
-    internal PreferenceEntry(MelonPreferences_Entry<bool> MelonEntry) : base(MelonEntry.DefaultValue)
+    private bool OverridenValue = false;
+    public bool Locked { get; private set; } = false;
+    public static implicit operator bool(PreferenceEntry Entry) => Entry.Value;
+    internal PreferenceEntry(MelonPreferences_Entry<bool> MelonEntry)
     {
         this.MelonEntry = MelonEntry;
     }
-    public override void ApplyWithFlags(Configurator.ConfiguratorOperationFlag Flags, ConfigurationEntry Other)
+    public void ApplyWithFlags(Configurator.ConfiguratorOperationFlag Flags, bool Other)
     {
-        base.ApplyWithFlags(Flags, Other);
+        if (Overridden && (Flags & Configurator.ConfiguratorOperationFlag.AllowOverride) == 0)
+            return;
 
+        Value = Other;
+        Overridden = true;
         Locked |= (Flags & Configurator.ConfiguratorOperationFlag.LockWhenChanged) != 0;
+        MelonEntry.IsHidden = Locked;
     }
-}
-
-internal static class MelonPreferenceCategoryExtensions
-{
-    internal static PreferenceEntry CreatePreferenceEntry(this MelonPreferences_Category self, string identifier, bool default_value, string? display_name = null, string? description = null, bool is_hidden = false, bool dont_save_default = false, ValueValidator? validator = null)
+    public void ClearOverride()
     {
-        MelonPreferences_Entry<bool> MelonEntry = self.CreateEntry<bool>(identifier, default_value, display_name, description, is_hidden, dont_save_default, validator);
-        return new PreferenceEntry(MelonEntry);
+        OverridenValue = false;
+        Locked = false;
     }
 }

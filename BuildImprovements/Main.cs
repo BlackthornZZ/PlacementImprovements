@@ -50,6 +50,8 @@ public sealed class Main : StarlightExpansionV01
 
     public override void AfterGameContext(GameContext gameContext)
     {
+        PreferenceDirector.ApplyExternalConfigurators();
+
         gameContext.InputDirector._mainGame.Map.asset.Disable();
         InputRegistrar.RegisterPlacementImprovementsInputs();
         gameContext.InputDirector._mainGame.Map.asset.Enable();

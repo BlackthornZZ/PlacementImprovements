@@ -3,11 +3,12 @@ using MelonLoader;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BuildImprovements.Configuration;
-public class Configurator
+public class Configurator : IComparable
 {
     [Flags]
     public enum ConfiguratorOperationFlag : byte
@@ -26,22 +27,23 @@ public class Configurator
         High = 500,
         VeryHigh = 1000
     }
-    private readonly ConfiguratorOperationFlag ConfiguratorFlags;
+    public readonly ConfiguratorOperationFlag ConfiguratorFlags;
     // Relevant only if the AllowOverride flag is enabled, determines the priority at which 
-    private readonly int Priority;
-    public readonly ConfigurationData Configuration = new();
-    public Configurator(ConfiguratorOperationFlag ConfiguratorFlags = ConfiguratorOperationFlag.Default, int Priority = 0)
+    public readonly int Priority;
+    public readonly string Source;
+    public readonly Dictionary<string, bool> ConfigurationOverrides = new();
+    public Configurator(string? Source = null, ConfiguratorOperationFlag ConfiguratorFlags = ConfiguratorOperationFlag.Default, ConfiguratorPriority Priority = ConfiguratorPriority.Lowest)
     {
+        this.Source = Source ?? Assembly.GetCallingAssembly().GetName().Name ?? "Nameless Assembly";
         this.ConfiguratorFlags = ConfiguratorFlags;
-        this.Priority = Priority;
+        this.Priority = (int)Priority;
     }
-    public Configurator(ConfiguratorOperationFlag ConfiguratorFlags = ConfiguratorOperationFlag.Default, ConfiguratorPriority Priority = ConfiguratorPriority.Lowest) : this(ConfiguratorFlags, (int)Priority) { }
 
     public void QueueForApplication()
     {
         if (GameContext.Instance != null)
         {
-            MelonLogger.Error("Configurator::QueueForApplication called AFTER GameContext initialization! Use Configurator::Reapply instead.");
+            MelonLogger.Error("Configurator::QueueForApplication called AFTER GameContext initialization! Use Configurator::Reapply instead if this Configurator is already registered.");
             return;
         }
 
@@ -56,6 +58,23 @@ public class Configurator
 
     public void Reapply()
     {
-        throw new NotImplementedException();
+        if (!PreferenceDirector.ExternalConfigurators.Contains(this))
+        {
+            MelonLogger.Error("Configurator::Reapply was called on a Configurator that wasn't registered! Register your Configurator with QueueForApplication in OnLateInitialize.");
+            return;
+        }
+
+        PreferenceDirector.UpdateGlobalConfiguration();
+    }
+
+    public int CompareTo(object? obj)
+    {
+        Configurator? Other = (Configurator?)obj;
+        if (Other == null) return 1;
+
+        if (Priority > Other.Priority) return 1;
+        if(Priority < Other.Priority) return -1;
+
+        return 0;
     }
 }
