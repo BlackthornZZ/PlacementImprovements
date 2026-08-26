@@ -18,39 +18,11 @@ public sealed class Main : StarlightExpansionV01
     public static bool bMultiplayerInstalled { get => StarlightPackageManager.GetPackageInfoFromID("de.pyeight.ranchingtogether") != null; }
 
     private static PlacementInputDirector? _PlacementInputDirector = null;
-    public static PlacementInputDirector PlacementInputDirector
-    {
-        get 
-        {
-            if(_PlacementInputDirector == null)
-                return _PlacementInputDirector = new();
-
-             return _PlacementInputDirector;
-        }
-    }
-
+    public static PlacementInputDirector PlacementInputDirector => _PlacementInputDirector ?? new();
     private static AdditiveUIDirector? _AdditiveUIDirector = null;
-    internal static AdditiveUIDirector AdditiveUIDirector 
-    {
-        get
-        {
-            if (_AdditiveUIDirector == null)
-                return _AdditiveUIDirector = new();
-            return _AdditiveUIDirector;
-        }
-    }
-
+    internal static AdditiveUIDirector AdditiveUIDirector => _AdditiveUIDirector ?? new();
     private static PatchHelper? _PatchHelper = null;
-    internal static PatchHelper PatchHelper 
-    {
-        get 
-        {
-            if (_PatchHelper == null)
-                return _PatchHelper = new();
-
-            return _PatchHelper;
-        }
-    }
+    internal static PatchHelper PatchHelper => _PatchHelper ?? new();
     protected override StarlightPackageInfo info => new()
     {
         ID = BuildInfo.ID,
